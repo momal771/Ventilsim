@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="VentilSim"/>
+<meta name="theme-color" content="#04070f"/>
+<title>VentilSim</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --cyan:#00e5ff;--green:#00e676;--pink:#ff6d9d;--amber:#ffca28;--red:#ff5252;--orange:#ff9800;
+  --bg:#04070f;--bg2:#060b16;--bg3:#030610;--bg4:#040810;
+  --border:#0a1828;--border2:#0d2035;
+  --text:#c5cfe0;--muted:#607080;--dim:#1e3a52;--dimmer:#0a2030
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;overflow-x:hidden}
+#app{display:flex;flex-direction:column;min-height:100vh;min-height:-webkit-fill-available}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;padding-top:max(12px,env(safe-area-inset-top))}
+.logo{font-family:monospace;font-size:15px;font-weight:700;color:var(--cyan);letter-spacing:4px}
+.logo span{color:#1a3050;font-weight:300}
+.subtitle{font-size:8px;color:#1a3050;letter-spacing:2px;margin-top:2px;font-family:monospace}
+.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-family:monospace;font-size:8px;letter-spacing:1.5px;padding:3px 8px;border-radius:2px}
+.b-cyan{background:#00e5ff10;border:1px solid #00e5ff30;color:var(--cyan)}
+.b-red{background:#ff525210;border:1px solid #ff525230;color:var(--red)}
+.b-amber{background:#ffca2810;border:1px solid #ffca2830;color:var(--amber)}
+
+/* ── TABS ── */
+.tabbar{display:flex;background:var(--bg3);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;scrollbar-width:none}
+.tabbar::-webkit-scrollbar{display:none}
+.tab{padding:10px 13px;font-family:monospace;font-size:9px;letter-spacing:1.5px;color:#2a4060;background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;flex-shrink:0}
+.tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* ── TOOLBAR ── */
+.toolbar{padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0}
+.toolrow{display:flex;gap:12px;flex-wrap:wrap}
+.toolgrp{flex:1;min-width:140px}
+.lbl{font-family:monospace;font-size:8px;letter-spacing:2px;color:#2a4060;margin-bottom:6px}
+.btnrow{display:flex;gap:4px}
+.btn{flex:1;padding:7px 4px;font-family:monospace;font-size:9px;letter-spacing:.5px;background:transparent;border:1px solid #0e1e30;color:#2a4060;cursor:pointer;border-radius:3px;transition:all .15s;min-width:0}
+.btn:active{transform:scale(.97)}
+.btn.ac{background:#00e5ff12;border-color:#00e5ff40;color:var(--cyan)}
+.btn.ag{background:#00e67612;border-color:#00e67640;color:var(--green)}
+.btn.ap{background:#ff6d9d12;border-color:#ff6d9d40;color:var(--pink)}
+.btn.aa{background:#ffca2812;border-color:#ffca2840;color:var(--amber)}
+
+/* ── MAIN ── */
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:620px){.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.g3{grid-template-columns:1fr}}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:12px}
+.ct{font-family:monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:12px}
+
+/* ── METRICS ── */
+.mbox{background:var(--bg4);border:1px solid var(--border);border-radius:3px;padding:8px 6px;text-align:center}
+.mbox.warn{border-color:#ff525230;background:#ff52520a}
+.mbox.caut{border-color:#ffca2830;background:#ffca280a}
+.mv{font-family:monospace;font-size:20px;font-weight:700;line-height:1}
+.ml{font-family:monospace;font-size:7px;letter-spacing:1px;color:#2a4060;margin-top:4px}
+.mu{font-family:monospace;font-size:7px;color:#1a3050;margin-top:1px}
+
+/* ── ALERTS ── */
+.al{border-radius:3px;padding:8px 12px;margin-bottom:8px;font-size:10px;line-height:1.7}
+.a-d{background:#ff52520a;border:1px solid #ff525228;color:#ff7070}
+.a-w{background:#ffca280a;border:1px solid #ffca2828;color:var(--amber)}
+.a-i{background:#00e5ff0a;border:1px solid #00e5ff20;color:#60c8e0}
+.a-g{background:#00e6760a;border:1px solid #00e67628;color:#60d090}
+
+/* ── WAVEFORM ── */
+.chan{margin-bottom:8px}
+.ch{display:flex;justify-content:space-between;margin-bottom:3px}
+.cl{font-family:monospace;font-size:8px;letter-spacing:2px;color:#2a4060}
+.cu{font-family:monospace;font-size:8px}
+canvas.wave{display:block;width:100%;height:80px;background:#030811;border-radius:3px;border:1px solid #080f1e}
+
+/* ── SLIDERS ── */
+.sr{margin-bottom:12px}
+.sh{display:flex;justify-content:space-between;margin-bottom:4px}
+.sn{font-size:10px;color:var(--muted)}
+.sv{font-family:monospace;font-size:12px;font-weight:700}
+input[type=range]{width:100%;cursor:pointer;height:20px;accent-color:var(--cyan)}
+.hint{font-size:8px;color:#1a3050;margin-top:2px;line-height:1.5}
+
+/* ── FORMS ── */
+select,input[type=number]{background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:3px;font-size:11px;font-family:monospace;width:100%;-webkit-appearance:none}
+.cbtn{background:var(--cyan);color:#030810;border:none;padding:9px 18px;border-radius:3px;font-family:monospace;font-size:9px;letter-spacing:2px;font-weight:700;cursor:pointer}
+.cbtn2{background:transparent;color:var(--green);border:1px solid #00e67640;padding:9px 18px;border-radius:3px;font-family:monospace;font-size:9px;letter-spacing:2px;cursor:pointer}
+
+/* ── ASYNC ── */
+.abadge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:2px;font-family:monospace;font-size:9px;margin:2px 4px 2px 0}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.acard{border-radius:5px;padding:12px;margin-bottom:10px;border:1px solid var(--border);background:var(--bg2)}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+@media(max-width:480px){.agrid{grid-template-columns:1fr}}
+.ablbl{font-family:monospace;font-size:7px;letter-spacing:2px;color:#2a4060;margin-bottom:3px}
+.abval{font-size:10px;color:#7090a8;line-height:1.6}
+
+/* ── FICHES THÉORIQUES ── */
+.fiche-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.fnav-btn{padding:6px 12px;font-family:monospace;font-size:9px;letter-spacing:1px;background:var(--bg4);border:1px solid var(--border);color:#2a4060;cursor:pointer;border-radius:3px;transition:all .15s;white-space:nowrap}
+.fnav-btn.active{background:#00e5ff12;border-color:#00e5ff40;color:var(--cyan)}
+.fiche{display:none}
+.fiche.active{display:block}
+
+/* Sections dans les fiches */
+.fiche h2{font-size:13px;font-weight:600;color:var(--cyan);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);font-family:monospace;letter-spacing:2px}
+.fiche h3{font-size:11px;font-weight:600;color:#80b0c8;margin:14px 0 8px;font-family:monospace;letter-spacing:1px}
+.fiche p{font-size:11px;color:#8090a0;line-height:1.8;margin-bottom:8px}
+.fiche ul{padding-left:16px;margin-bottom:8px}
+.fiche li{font-size:11px;color:#8090a0;line-height:1.8;margin-bottom:2px}
+.fiche li::marker{color:var(--cyan)}
+.fiche strong{color:var(--text);font-weight:600}
+.fiche em{color:var(--amber);font-style:normal}
+
+/* Formule box */
+.fbox{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:10px 14px;margin:10px 0;font-family:monospace;font-size:10px;line-height:2}
+.fbox .f-title{font-size:8px;letter-spacing:2px;color:#2a4060;margin-bottom:6px}
+.fbox .eq{color:var(--cyan)}
+.fbox .eq2{color:var(--green)}
+.fbox .eq3{color:var(--pink)}
+.fbox .eq4{color:var(--amber)}
+.fbox .comment{color:var(--dim);font-size:9px}
+
+/* Key-value tableau */
+.kv{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:10px}
+.kv td{padding:5px 8px;border-bottom:1px solid var(--border)}
+.kv td:first-child{color:#2a4060;font-family:monospace;letter-spacing:.5px;width:45%}
+.kv td:last-child{color:var(--text)}
+.kv tr:last-child td{border-bottom:none}
+
+/* Encadré mnémotechnique */
+.memo{background:#00e5ff08;border:1px solid #00e5ff20;border-left:3px solid var(--cyan);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a8b8;line-height:1.8}
+.memo .memo-title{font-family:monospace;font-size:8px;letter-spacing:2px;color:var(--cyan);margin-bottom:5px}
+.warn-box{background:#ff52520a;border:1px solid #ff525225;border-left:3px solid var(--red);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#c07070;line-height:1.8}
+.warn-box .wb-title{font-family:monospace;font-size:8px;letter-spacing:2px;color:var(--red);margin-bottom:5px}
+.ok-box{background:#00e6760a;border:1px solid #00e67625;border-left:3px solid var(--green);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a888;line-height:1.8}
+
+/* Tag valeur normale */
+.vn{display:inline-block;background:#00e5ff10;border:1px solid #00e5ff25;color:var(--cyan);font-family:monospace;font-size:9px;padding:1px 7px;border-radius:2px;margin:1px}
+.vp{display:inline-block;background:#ff52520f;border:1px solid #ff525225;color:#ff7070;font-family:monospace;font-size:9px;padding:1px 7px;border-radius:2px;margin:1px}
+
+/* PWA toast */
+#pwa-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid #00e5ff30;color:var(--cyan);padding:10px 18px;border-radius:4px;font-family:monospace;font-size:10px;letter-spacing:1px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+#pwa-toast.show{opacity:1}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,.01) 2px,rgba(0,229,255,.01) 4px);pointer-events:none;z-index:9999}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <div class="logo">VENTIL<span>SIM</span></div>
+      <div class="subtitle">SIMULATEUR · EIVASION UPEC</div>
+    </div>
+    <div class="badges" id="hdr-badges"></div>
+  </header>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab active" data-tab="courbes">COURBES</button>
+    <button class="tab" data-tab="params">PARAMÈTRES</button>
+    <button class="tab" data-tab="calcul">CALCULATEUR</button>
+    <button class="tab" data-tab="async">ASYNCHRONIES</button>
+    <button class="tab" data-tab="fiches">📖 FICHES</button>
+  </div>
+
+  <div class="toolbar" id="toolbar-wrap">
+    <div class="toolrow">
+      <div class="toolgrp">
+        <div class="lbl">MODE VENTILATOIRE</div>
+        <div class="btnrow" id="mode-btns">
+          <button class="btn ac" data-mode="vcv">📐 VCV</button>
+          <button class="btn" data-mode="vaci">🔄 VACI</button>
+          <button class="btn" data-mode="vsai">💨 VSAI</button>
+        </div>
+      </div>
+      <div class="toolgrp">
+        <div class="lbl">SCÉNARIO CLINIQUE</div>
+        <div class="btnrow" id="scen-btns">
+          <button class="btn ac" data-scen="normal">🫁 Sain</button>
+          <button class="btn" data-scen="sdra">🔴 SDRA</button>
+          <button class="btn" data-scen="bpco">🟡 BPCO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content"></main>
+</div>
+<div id="pwa-toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DONNÉES CLINIQUES
+// ═══════════════════════════════════════════════════
+const SC={
+  normal:{label:"Poumon sain",C:60,R:8,peep:5,color:"#00e5ff",bcls:"b-cyan",bcls2:"ac",
+    desc:"Mécanique ventilatoire normale. Patient intubé pour chirurgie élective.",
+    triggers:{freq:.1,effort:"faible"}},
+  sdra:{label:"SDRA modéré",C:25,R:12,peep:10,color:"#ff5252",bcls:"b-red",bcls2:"aa",
+    desc:"Berlin 2012. Compliance ↓↓, hypoxémie réfractaire. Stratégie protectrice obligatoire.",
+    triggers:{freq:.3,effort:"intense"}},
+  bpco:{label:"BPCO décomp.",C:80,R:25,peep:5,color:"#ffca28",bcls:"b-amber",bcls2:"aa",
+    desc:"Obstruction bronchique majeure, τ élevée, risque auto-PEEP ++.",
+    triggers:{freq:.4,effort:"modéré"}}
+};
+const MD={
+  vcv:{label:"VCV",color:"#00e5ff",acls:"ac",full:"Ventilation Contrôlée en Volume",
+    desc:"Volume courant = variable cible imposée. Pression = résultante (dépend de C et R). Débit carré. Pression montante avec plateau télé-inspiratoire.",
+    mooc:"Sem. 2 — Pcrete = résistive (R×Flow) + élastique (Vt/C) + PEEP. Pplat = élastique seule."},
+  vaci:{label:"VAC/VACI",color:"#00e676",acls:"ag",full:"Ventilation Assistée Contrôlée / Intermittente",
+    desc:"Cycles contrôlés garantis + cycles spontanés intercalés (toutes les 3 insufflations). Mode de transition vers sevrage.",
+    mooc:"Sem. 3 — La VACI maintient le drive respiratoire et prévient l'atrophie diaphragmatique."},
+  vsai:{label:"VSAI/AI",color:"#ff6d9d",acls:"ap",full:"Ventilation Spontanée avec Aide Inspiratoire",
+    desc:"Chaque cycle déclenché par le patient. Débit décélérant. Pression plateau = PEEP + PS. Sevrage par réduction progressive de la PS.",
+    mooc:"Sem. 4 — Sevrage progressif : PS 20→15→12→8→5. Extubation possible à PS ≤ 7 cmH₂O."}
+};
+
+// ═══════════════════════════════════════════════════
+// ÉTAT APPLICATION
+// ═══════════════════════════════════════════════════
+const S={
+  mode:"vcv",scen:"normal",tab:"courbes",
+  vt:500,fr:16,peep:5,ie:.4,fio2:40,ps:12,
+  cTaille:170,cSexe:"H",cPath:"normal",cResult:null,
+  fiche:"physio"
+};
+
+// ═══════════════════════════════════════════════════
+// PHYSIO — GÉNÉRATEUR DE COURBES
+// ═══════════════════════════════════════════════════
+function genCurves(steps=280){
+  const sc=SC[S.scen],C=sc.C,R=sc.R;
+  const Tt=60/S.fr,Ti=Tt*S.ie,Te=Tt*(1-S.ie);
+  const Vt=S.vt/1000,Fp=Vt/(Ti*.8);
+  const P=[],Q=[],V=[],asyncs=[];
+  for(let i=0;i<steps;i++){
+    const t=(i/steps)*Tt,tc=t%Tt,insp=tc<Ti;
+    let p,q,v;
+    if(S.mode==="vcv"){
+      if(insp){const tr=tc/Ti;if(tr<.8){q=Fp;v=q*tc;p=R*q+(v/(C/1000))+S.peep;}else{q=0;v=Vt;p=(Vt/(C/1000))+S.peep;}}
+      else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=(v/(C/1000))+S.peep;if(te>Te*.85&&v>.05*Vt&&R>20&&!asyncs.includes("auto-PEEP"))asyncs.push("auto-PEEP");}
+    }else if(S.mode==="vaci"){
+      const spon=Math.floor(t/Tt)%3===2;
+      if(insp){const tr=tc/Ti;if(spon){q=Fp*Math.sin(Math.PI*tr);v=Vt*.7*tr;p=S.peep+(Vt*.7*tr/(C/1000))+R*q*.5;}else{q=tr<.8?Fp:0;v=q>0?q*tc:Vt;p=R*(q>0?q:0)+(Math.min(v,Vt)/(C/1000))+S.peep;}}
+      else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=(v/(C/1000))+S.peep;}
+    }else{
+      if(insp){const tr=tc/Ti;if(tr<.05){p=S.peep-(SC[S.scen].triggers.effort==="intense"?4:2);q=.1;v=0;if(SC[S.scen].triggers.effort==="intense"&&!asyncs.includes("double-trigger"))asyncs.push("double-trigger");}
+      else{q=Fp*(1-tr)*2;v=Vt*(1-Math.exp(-3*tr));p=S.peep+S.ps;}
+      if(SC[S.scen].triggers.freq<.15&&!asyncs.includes("non-trigger"))asyncs.push("non-trigger");}
+      else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=S.peep+Math.max(0,S.ps*Math.exp(-te*3));}
+    }
+    P.push(Math.max(S.peep-6,p||S.peep));Q.push((q||0)*60);V.push(Math.max(0,(v||0)*1000));
+  }
+  return{P,Q,V,asyncs};
+}
+
+function getMetrics(){
+  const sc=SC[S.scen];
+  const pplat=Math.round(S.vt/sc.C+S.peep);
+  const pmax=Math.round(S.vt/sc.C+sc.R*(S.vt/1000/(S.fr/60*S.ie*.8))+S.peep);
+  const drv=pplat-S.peep;
+  const tau=sc.R*sc.C/1000;
+  const te=(1-S.ie)/(S.fr/60);
+  const autoP=sc.R>20&&te<tau*3;
+  const ve=Math.round(S.vt*S.fr/100)/10;
+  return{pplat,pmax,drv,autoP,ve,tau};
+}
+
+function drawWave(id,data,color){
+  const cv=document.getElementById(id);if(!cv)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||300,H=cv.clientHeight||80;
+  cv.width=W*dpr;cv.height=H*dpr;
+  const ctx=cv.getContext("2d");ctx.scale(dpr,dpr);
+  ctx.fillStyle="#030811";ctx.fillRect(0,0,W,H);
+  const mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1;
+  const pad=5,sy=v=>H-((v-mn)/rng)*(H-pad*2)-pad;
+  ctx.strokeStyle="#0d1e30";ctx.lineWidth=.5;
+  [.25,.5,.75].forEach(r=>{ctx.beginPath();ctx.moveTo(0,H*r);ctx.lineTo(W,H*r);ctx.stroke()});
+  if(color==="#00e676"){const z=sy(0);ctx.strokeStyle="#1a2a40";ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(W,z);ctx.stroke();ctx.setLineDash([]);}
+  const grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,color+"25");grad.addColorStop(1,color+"00");
+  ctx.beginPath();
+  data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  ctx.beginPath();
+  data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.lineJoin="round";ctx.stroke();
+  ctx.font="500 8px monospace";ctx.fillStyle="#1e3a52";ctx.textAlign="right";
+  ctx.fillText(Math.round(mx*10)/10,W-4,12);ctx.fillText(Math.round(mn*10)/10,W-4,H-3);
+}
+
+function calcPI(t,s){return s==="H"?50+.91*(t-152.4):45.5+.91*(t-152.4);}
+function calcARDS(t,s,p){
+  const pi=calcPI(t,s),sc=SC[p];
+  const vpkg=p==="sdra"?6:8,vt=Math.round(pi*vpkg);
+  const peep=p==="sdra"?10:p==="bpco"?4:5;
+  const fr=Math.round((p==="bpco"?7000:9000)/vt);
+  const pp=Math.round(vt/sc.C+peep),drv=pp-peep;
+  return{pi:Math.round(pi*10)/10,vt,vpkg,fr,peep,pp,drv,rsbi:Math.round(fr/(vt/1000))};
+}
+
+function asyncBadge(type){
+  const map={"auto-PEEP":["#ffca28","Auto-PEEP"],"double-trigger":["#ff5252","Double déclenchement"],"non-trigger":["#ff6d9d","Non-déclenchement"]};
+  const[c,l]=map[type]||["#aaa",type];
+  return`<span class="abadge" style="background:${c}10;border:1px solid ${c}40;color:${c}"><span class="dot" style="background:${c}"></span>${l}</span>`;
+}
+function mbox(val,lbl,unit,warn,caut,color){
+  const cls=warn?"warn":caut?"caut":"",col=warn?"#ff5252":caut?"#ffca28":(color||"#00e5ff");
+  return`<div class="mbox ${cls}"><div class="mv" style="color:${col}">${val}</div><div class="ml">${lbl}</div><div class="mu">${unit}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDUS ONGLETS SIMULATEUR
+// ═══════════════════════════════════════════════════
+function renderCourbes(){
+  const sc=SC[S.scen],m=MD[S.mode],met=getMetrics(),d=genCurves();
+  return`<div class="g2">
+  <div>
+    <div class="card" style="border-color:${m.color}25">
+      <div class="ct">${m.full.toUpperCase()}</div>
+      <div style="font-size:11px;color:#607080;line-height:1.8;margin-bottom:10px">${m.desc}</div>
+      <div style="font-size:9px;color:#1e3a52;line-height:1.7;padding:8px 10px;background:#030810;border-radius:3px;border-left:2px solid ${m.color}40">📌 ${m.mooc}</div>
+    </div>
+    <div class="card">
+      <div class="ct">MÉTRIQUES TEMPS RÉEL</div>
+      <div class="g3" style="margin-bottom:10px">
+        ${mbox(met.pplat,"P PLATEAU","cmH₂O",met.pplat>30,false)}
+        ${mbox(met.drv,"DRIVING P.","cmH₂O",false,met.drv>15)}
+        ${mbox(met.pmax,"P CRÊTE","cmH₂O",met.pmax>40,false)}
+        ${mbox(met.ve,"VE","L/min",false,false,"#00e676")}
+        ${mbox(sc.C,"COMPLIANCE","mL/cmH₂O",false,false,sc.color)}
+        ${mbox(met.autoP?"RISQUE":"OK","AUTO-PEEP","τ="+Math.round(met.tau*100)/100+"s",false,met.autoP,met.autoP?"#ffca28":"#00e676")}
+      </div>
+      ${met.pplat>30?`<div class="al a-d">Pplat > 30 cmH₂O — Barotraumatisme. ↓ Vt → 6 mL/kg PI (ARDSNet).</div>`:''}
+      ${met.drv>15?`<div class="al a-w">Driving P > 15 cmH₂O — Facteur de mortalité au SDRA (Amato 2015, NEJM).</div>`:''}
+      ${met.autoP?`<div class="al a-w">Auto-PEEP probable — τ=${Math.round(sc.R*sc.C)}ms. ↓ FR ou ↑ ratio I:E pour ↑ Te.</div>`:''}
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">MONITEUR — COURBES VENTILATOIRES</div>
+    <div class="chan"><div class="ch"><span class="cl">PRESSION</span><span class="cu" style="color:#00e5ff">cmH₂O</span></div><canvas class="wave" id="cv-p" height="80"></canvas></div>
+    <div class="chan"><div class="ch"><span class="cl">DÉBIT</span><span class="cu" style="color:#00e676">L/min</span></div><canvas class="wave" id="cv-q" height="80"></canvas></div>
+    <div class="chan"><div class="ch"><span class="cl">VOLUME</span><span class="cu" style="color:#ff6d9d">mL</span></div><canvas class="wave" id="cv-v" height="80"></canvas></div>
+    ${d.asyncs.length?`<div style="margin-top:8px"><div class="lbl" style="margin-bottom:5px">ASYNCHRONIES</div><div>${d.asyncs.map(asyncBadge).join("")}</div></div>`:''}
+    <div style="margin-top:10px;padding:8px 10px;background:#030810;border-radius:3px;font-family:monospace;font-size:9px;color:var(--dim);line-height:1.9">
+      ${S.mode==="vcv"?"P : résistive + plateau · Q : carré insp, négatif exp · V : rampe → exp":S.mode==="vaci"?"Cycle 1-2 : contrôlé · Cycle 3 : spontané (Vt↓, sinusoïdal)":"Effort = dépression initiale · Plateau = PEEP + "+S.ps+" cmH₂O"}
+    </div>
+  </div></div>`;
+}
+
+function renderParams(){
+  const sc=SC[S.scen];
+  const sliders=[
+    {k:"vt",l:"Volume courant (Vt)",u:"mL",min:200,max:800,st:10,c:"#00e5ff",hint:"Cible 6-8 mL/kg PI. SDRA : 6 mL/kg strict (ARDSNet)."},
+    {k:"fr",l:"Fréquence respiratoire",u:"/min",min:8,max:35,st:1,c:"#00e5ff",hint:"Standard 14-18/min. BPCO : ↓ FR pour ↑ Te."},
+    {k:"peep",l:"PEEP",u:"cmH₂O",min:0,max:20,st:1,c:"#00e676",hint:"SDRA : table ARDSNet. BPCO : extrinsèque ≤ 85% auto-PEEP."},
+    {k:"fio2",l:"FiO₂",u:"%",min:21,max:100,st:1,c:"#00e676",hint:"Cible SpO₂ 94-98%. FiO₂ > 60% prolongée : toxicité O₂."},
+    {k:"ie",l:"Ratio I/(I+E)",u:"",min:.2,max:.6,st:.05,c:"#ff6d9d",hint:"Standard 0.33 (I:E=1:2). BPCO : ↓ 0.25 pour ↑ Te."},
+  ];
+  if(S.mode==="vsai")sliders.push({k:"ps",l:"Aide inspiratoire (PS)",u:"cmH₂O",min:0,max:25,st:1,c:"#ff6d9d",hint:"Sevrage : PS 20→15→12→8→5. Test VS si PS ≤ 7 cmH₂O."});
+  return`<div class="g2">
+  <div class="card">
+    <div class="ct">RÉGLAGES VENTILATOIRES</div>
+    ${sliders.map(s=>`<div class="sr">
+      <div class="sh"><span class="sn">${s.l}</span><span class="sv" style="color:${s.c}">${s.k==="ie"?"1:"+Math.round((1-S[s.k])/S[s.k]):S[s.k]}<span style="font-size:9px;font-weight:300;color:#1a3050"> ${s.u}</span></span></div>
+      <input type="range" min="${s.min}" max="${s.max}" step="${s.st}" value="${S[s.k]}" style="accent-color:${s.c}" oninput="S['${s.k}']=parseFloat(this.value);refresh()">
+      <div class="hint">${s.hint}</div>
+    </div>`).join("")}
+  </div>
+  <div>
+    <div class="card" style="border-color:${sc.color}25">
+      <div class="ct">SCÉNARIO : ${sc.label.toUpperCase()}</div>
+      <div style="font-size:10px;color:#507088;line-height:1.8;margin-bottom:12px">${sc.desc}</div>
+      <div class="g2">${mbox(sc.C,"COMPLIANCE","mL/cmH₂O",false,false,sc.color)}${mbox(sc.R,"RÉSISTANCE","cmH₂O/L/s",false,false,sc.color)}</div>
+      <div style="font-size:9px;color:var(--dim);margin-top:10px;font-family:monospace">τ=R×C=${Math.round(sc.R*sc.C/10)/100}s · 3τ=${Math.round(sc.R*sc.C*3/10)/100}s</div>
+    </div>
+    <div class="card">
+      <div class="ct">FORMULES CLÉS</div>
+      <div style="font-family:monospace;font-size:9px;color:var(--dim);line-height:2.2">
+        <div style="color:#00e5ff">Pcrete = (Vt/C) + (R×Flow) + PEEP</div>
+        <div style="color:#00e676">Pplateau = (Vt/C) + PEEP  &lt; 30</div>
+        <div style="color:#ff6d9d">Driving P = Pplat − PEEP  &lt; 15</div>
+        <div>τ = R × C | Te ≥ 3τ requis</div>
+        <div style="color:#ffca28">Auto-PEEP si Te &lt; 3τ</div>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function renderCalc(){
+  const r=S.cResult,sc=SC[S.cPath];
+  const pi=Math.round(calcPI(S.cTaille,S.cSexe)*10)/10;
+  return`<div class="g2">
+  <div class="card">
+    <div class="ct">CALCULATEUR ARDSNet</div>
+    <div style="margin-bottom:12px"><div class="lbl">SEXE</div>
+      <div class="btnrow" style="gap:6px">
+        <button class="btn ${S.cSexe==="H"?"ac":""}" onclick="S.cSexe='H';refresh()">♂ Homme</button>
+        <button class="btn ${S.cSexe==="F"?"ac":""}" onclick="S.cSexe='F';refresh()">♀ Femme</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px"><div class="lbl">TAILLE (cm)</div>
+      <input type="number" min="140" max="210" value="${S.cTaille}" oninput="S.cTaille=Number(this.value);refresh()">
+      <div class="hint" style="margin-top:4px">Poids idéal = ${pi} kg</div>
+    </div>
+    <div style="margin-bottom:16px"><div class="lbl">PATHOLOGIE</div>
+      <select onchange="S.cPath=this.value;refresh()">
+        <option value="normal" ${S.cPath==="normal"?"selected":""}>Poumon sain</option>
+        <option value="sdra" ${S.cPath==="sdra"?"selected":""}>SDRA modéré</option>
+        <option value="bpco" ${S.cPath==="bpco"?"selected":""}>BPCO décompensé</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="cbtn" onclick="S.cResult=calcARDS(S.cTaille,S.cSexe,S.cPath);refresh()">CALCULER</button>
+      ${r?`<button class="cbtn2" onclick="S.vt=S.cResult.vt;S.fr=S.cResult.fr;S.peep=S.cResult.peep;S.scen=S.cPath;refresh()">APPLIQUER</button>`:''}
+    </div>
+  </div>
+  ${r?`<div>
+    <div class="card">
+      <div class="ct">RÉSULTATS — ${sc.label.toUpperCase()}</div>
+      <div class="g3">
+        ${mbox(r.pi,"POIDS IDÉAL","kg",false,false,sc.color)}
+        ${mbox(r.vt,"Vt CIBLE","mL / "+r.vpkg+"mL/kg",false,false,sc.color)}
+        ${mbox(r.fr,"FRÉQ. RESP.","/min",false,false,sc.color)}
+        ${mbox(r.peep,"PEEP INIT.","cmH₂O",false,false,sc.color)}
+        ${mbox(r.pp,"Pplat EST.","cmH₂O",r.pp>30,false)}
+        ${mbox(r.drv,"DRIVING","cmH₂O",false,r.drv>15)}
+      </div>
+      ${r.pp>30?`<div class="al a-d" style="margin-top:10px">Pplat estimée > 30. Réduire Vt à 5-6 mL/kg PI.</div>`:''}
+      <div style="margin-top:12px;padding:8px 10px;background:#030810;border-radius:3px;font-family:monospace;font-size:9px;color:var(--dim);line-height:1.9">
+        RSBI = <span style="color:${r.rsbi<105?"#00e676":"#ff5252"};font-weight:700">${r.rsbi}</span> /min/L
+        <span style="color:#0a2030"> · cible &lt; 105</span>
+      </div>
+    </div>
+    <div class="al a-i" style="border-radius:5px;padding:12px 14px">ARDSNet 2000, NEJM : Vt 6 mL/kg PI → Pplat ≤ 30 → mortalité −9%.</div>
+  </div>`:`<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:180px"><div style="text-align:center;color:var(--dim);font-family:monospace;font-size:10px;letter-spacing:2px">ENTRER LES DONNÉES<br><span style="color:#0a2030">ET CLIQUER CALCULER</span></div></div>`}
+  </div>`;
+}
+
+function renderAsync(){
+  const items=[
+    {type:"DOUBLE DÉCLENCHEMENT",color:"#ff5252",
+     meca:"Effort inspiratoire > durée du cycle ventilateur. Le patient déclenche un 2e cycle immédiatement.",
+     courbe:"2 pics de pression successifs. Débit : 2 cycles rapprochés. Vt potentiellement doublé.",
+     risque:"Vt effectif doublé → barotraumatisme, sur-distension, VILI.",
+     solution:"↑ Ti ou ↑ seuil de cyclage (30%→10%) en VSAI. En VCV : ↑ Vt ou ↓ FR."},
+    {type:"NON-DÉCLENCHEMENT",color:"#ff6d9d",
+     meca:"Effort patient insuffisant pour dépasser le seuil trigger. Aggravé par l'auto-PEEP.",
+     courbe:"Dépression visible sur courbe de débit sans déclenchement de cycle ventilateur.",
+     risque:"Travail respiratoire ↑↑, fatigue diaphragmatique chronique.",
+     solution:"↓ seuil trigger. PEEP extrinsèque = 50-85% auto-PEEP mesurée."},
+    {type:"AUTO-PEEP / AIR TRAPPING",color:"#ffca28",
+     meca:"Expiration incomplète avant le cycle suivant. τ = RC élevée (BPCO, asthme).",
+     courbe:"Volume ne revient pas à 0. Débit expiratoire encore positif au début du cycle suivant.",
+     risque:"Hyperinflation dynamique → ↓ retour veineux → instabilité HD, pneumothorax.",
+     solution:"↑ Te : ↓ FR, ↓ ratio I:E, ↓ Vt. Bronchodilatateurs. Mesure : pause télé-expiratoire."},
+    {type:"ASYNCHRONIE DE CYCLAGE",color:"#ff9800",
+     meca:"Cycle ventilateur ne s'arrête pas quand le patient finit son effort inspiratoire.",
+     courbe:"VSAI : effort patient cesse avant fin du cycle → contre-effort en fin d'inspiration.",
+     risque:"Recrutement muscles expiratoires, lutte patient-ventilateur, inconfort majeur.",
+     solution:"↓ seuil de cyclage (30%→10-15%) en VSAI. ↓ Ti en VCV."},
+  ];
+  return`<div class="card" style="margin-bottom:14px">
+    <div class="ct">GUIDE DES ASYNCHRONIES PATIENT-VENTILATEUR</div>
+    <div style="font-size:10px;color:#507088;line-height:1.8">Les asynchronies concernent 25-50% des patients ventilés. Elles allongent la durée de VM et augmentent la mortalité (Thille 2006, ICM).</div>
+  </div>
+  ${items.map(a=>`<div class="acard" style="border-color:${a.color}25">
+    <div style="font-family:monospace;font-size:10px;letter-spacing:1.5px;font-weight:700;color:${a.color};margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:${a.color}"></span>${a.type}</div>
+    <div class="agrid">
+      <div><div class="ablbl">MÉCANISME</div><div class="abval">${a.meca}</div></div>
+      <div><div class="ablbl">SUR LES COURBES</div><div class="abval">${a.courbe}</div></div>
+      <div><div class="ablbl" style="color:#ff525055">RISQUE</div><div class="abval" style="color:#806060">${a.risque}</div></div>
+      <div><div class="ablbl" style="color:#00e67655">SOLUTION</div><div class="abval" style="color:#406a50">${a.solution}</div></div>
+    </div>
+  </div>`).join("")}`;
+}
+
+// ═══════════════════════════════════════════════════
+// CONTENU DES FICHES THÉORIQUES
+// ═══════════════════════════════════════════════════
+const FICHES={
+
+physio:`<h2>01 — BASES DE PHYSIOLOGIE VENTILATOIRE</h2>
+
+<h3>Le système respiratoire comme circuit RC</h3>
+<p>Le poumon ventilé mécaniquement se modélise par un circuit résistance-compliance en série. Toute la ventilation mécanique découle de ces deux paramètres fondamentaux.</p>
+
+<div class="fbox">
+  <div class="f-title">ÉQUATION DU MOUVEMENT</div>
+  <div class="eq">P = (V / C) + (R × Flow) + PEEP</div>
+  <div class="comment">P = pression des voies aériennes (cmH₂O)</div>
+  <div class="comment">V = volume mobilisé (L) · C = compliance (L/cmH₂O)</div>
+  <div class="comment">R = résistance (cmH₂O/L/s) · Flow = débit instantané (L/s)</div>
+</div>
+
+<h3>La compliance (C)</h3>
+<p>La compliance pulmonaire exprime la <strong>déformabilité du système respiratoire</strong> : variation de volume pour une variation de pression donnée.</p>
+<div class="fbox">
+  <div class="eq2">C = ΔV / ΔP = Vt / (Pplat − PEEP)</div>
+  <div class="comment">Mesurée en pause télé-inspiratoire (débit = 0)</div>
+</div>
+<table class="kv">
+  <tr><td>Normale</td><td><span class="vn">40–80 mL/cmH₂O</span></td></tr>
+  <tr><td>SDRA sévère</td><td><span class="vp">&lt; 20 mL/cmH₂O</span></td></tr>
+  <tr><td>SDRA modéré</td><td><span class="vp">20–40 mL/cmH₂O</span></td></tr>
+  <tr><td>BPCO (emphysème)</td><td><span class="vn">60–100 mL/cmH₂O</span> (compliance ↑↑)</td></tr>
+  <tr><td>Fibrose pulmonaire</td><td><span class="vp">&lt; 30 mL/cmH₂O</span></td></tr>
+</table>
+
+<h3>La résistance des voies aériennes (R)</h3>
+<p>La résistance traduit l'<strong>opposition au débit gazeux</strong> dans les voies aériennes. Elle est augmentée en cas de bronchospasme, sécrétions, sonde d'intubation fine.</p>
+<table class="kv">
+  <tr><td>Normale (intubé)</td><td><span class="vn">5–15 cmH₂O/L/s</span></td></tr>
+  <tr><td>BPCO sévère</td><td><span class="vp">20–50 cmH₂O/L/s</span></td></tr>
+  <tr><td>Asthme aigu grave</td><td><span class="vp">jusqu'à 100 cmH₂O/L/s</span></td></tr>
+</table>
+
+<h3>La constante de temps (τ)</h3>
+<p>La constante de temps τ définit la <strong>vitesse de vidange pulmonaire</strong>. En dessous de 3τ, l'expiration est incomplète → auto-PEEP.</p>
+<div class="fbox">
+  <div class="eq3">τ = R × C</div>
+  <div class="comment">À 1τ : 63% du volume expiré</div>
+  <div class="comment">À 3τ : 95% — expiration quasi-complète</div>
+  <div class="comment">À 5τ : 99% — expiration complète</div>
+  <div class="eq4">Te minimal requis = 3 × τ</div>
+</div>
+
+<div class="warn-box">
+  <div class="wb-title">⚠ PIÈGE BPCO</div>
+  τ BPCO = 25 × 80/1000 = <strong>2 secondes</strong>. Pour FR=18/min, Tt=3.3s, Te=2.2s. Comme Te &lt; 3τ=6s → auto-PEEP certaine !<br>
+  Solution : ↓ FR à 10-12/min, ratio I:E = 1:4 minimum.
+</div>
+
+<h3>Les pressions clés en ventilation</h3>
+<table class="kv">
+  <tr><td>Pression crête (Ppeak)</td><td>Max pendant l'insufflation. Composante résistive + élastique.</td></tr>
+  <tr><td>Pression plateau (Pplat)</td><td>Mesurée en pause télé-insp. (débit=0). Composante élastique seule. <em>Cible &lt; 30 cmH₂O</em></td></tr>
+  <tr><td>Driving pressure (DP)</td><td>DP = Pplat − PEEP. Reflet de la contrainte sur le parenchyme. <em>Cible &lt; 15 cmH₂O</em></td></tr>
+  <tr><td>PEEP totale</td><td>PEEP réglée + auto-PEEP. Mesurée par occlusion télé-expiratoire.</td></tr>
+</table>
+
+<div class="memo">
+  <div class="memo-title">📌 À RETENIR</div>
+  Ppeak − Pplat = composante <strong>résistive</strong> (R × Flow)<br>
+  Pplat − PEEP = driving pressure = composante <strong>élastique</strong><br>
+  Si Ppeak ↑ avec Pplat stable → problème résistif (bronchospasme, sécrétions)<br>
+  Si Pplat ↑ → problème compliance (SDRA, pneumothorax, épanchement)
+</div>`,
+
+// ────────────────────────────────────────────────
+modes:`<h2>02 — MODES VENTILATOIRES</h2>
+
+<h3>Classification générale</h3>
+<p>Les modes se distinguent par la <strong>variable contrôlée</strong> (volume ou pression), le <strong>déclencheur</strong> du cycle (ventilateur ou patient) et la <strong>cible</strong> de chaque insufflation.</p>
+
+<h3>VCV — Ventilation Contrôlée en Volume</h3>
+<p>Le ventilateur impose un <strong>volume courant fixe</strong>. La pression est la variable résultante, elle varie selon la mécanique pulmonaire du patient.</p>
+<table class="kv">
+  <tr><td>Variable contrôlée</td><td>Volume courant (Vt)</td></tr>
+  <tr><td>Variable résultante</td><td>Pression des VA (variable !)</td></tr>
+  <tr><td>Profil de débit</td><td>Carré (débit constant) ou décélérant</td></tr>
+  <tr><td>Avantage</td><td>Vt garanti, ventilation-minute stable</td></tr>
+  <tr><td>Inconvénient</td><td>Pression peut monter si compliance ↓ ou résistance ↑</td></tr>
+  <tr><td>Surveillance</td><td>Pplat, driving pressure à chaque réglage</td></tr>
+</table>
+
+<div class="ok-box">Courbe de débit <strong>carré</strong> → Pression : montée linéaire + plateau télé-insp. + décroissance exponentielle. La durée du plateau = pause de fin d'inspiration.</div>
+
+<h3>VCV-PC (Pressure Control) — Ventilation Contrôlée en Pression</h3>
+<p>Le ventilateur impose une <strong>pression d'insufflation fixe</strong>. Le volume est la variable résultante. Non simulé ici mais important en SDRA sévère.</p>
+<table class="kv">
+  <tr><td>Variable contrôlée</td><td>Pression d'insufflation</td></tr>
+  <tr><td>Variable résultante</td><td>Volume courant (variable !)</td></tr>
+  <tr><td>Profil de débit</td><td>Décélérant (débit max en début d'insp.)</td></tr>
+  <tr><td>Avantage</td><td>Pression limitée, meilleure tolérance</td></tr>
+  <tr><td>Inconvénient</td><td>Vt non garanti, surveiller si compliance change</td></tr>
+</table>
+
+<h3>VACI — Ventilation Assistée Contrôlée Intermittente</h3>
+<p>Mode hybride : le ventilateur délivre un <strong>nombre garanti de cycles contrôlés</strong> tout en permettant des cycles spontanés intercalés. Chaque effort spontané est amplifié par une aide inspiratoire.</p>
+<table class="kv">
+  <tr><td>Cycles contrôlés</td><td>FR réglée, Vt garanti</td></tr>
+  <tr><td>Cycles spontanés</td><td>Déclenchés par le patient, amplifiés par PS</td></tr>
+  <tr><td>Intérêt</td><td>Maintien du drive, prévention atrophie diaphragmatique</td></tr>
+  <tr><td>Utilisation</td><td>Transition post-sédation, début de sevrage</td></tr>
+</table>
+
+<h3>VSAI/AI — Ventilation Spontanée avec Aide Inspiratoire</h3>
+<p>Mode entièrement <strong>déclenché par le patient</strong>. Chaque effort déclenche une insufflation que le ventilateur amplifie jusqu'à un niveau de pression prédéfini (= PEEP + PS). Le cyclage en expiration se fait quand le débit descend sous un seuil (25-30% du débit de pointe).</p>
+<table class="kv">
+  <tr><td>Déclenchement</td><td>Effort patient (trigger en débit ou pression)</td></tr>
+  <tr><td>Pression d'insufflation</td><td>PEEP + niveau d'aide (PS)</td></tr>
+  <tr><td>Profil de débit</td><td>Décélérant (max en début d'insp.)</td></tr>
+  <tr><td>Cyclage</td><td>Au % du débit de pointe (25-30% standard)</td></tr>
+  <tr><td>Vt</td><td>Non garanti, dépend de C, R et effort patient</td></tr>
+</table>
+
+<div class="memo">
+  <div class="memo-title">📌 RÈGLE DU TRIGGER</div>
+  Trigger en débit : −1 à −2 L/min par défaut.<br>
+  Trigger en pression : −0.5 à −1.5 cmH₂O.<br>
+  Trop sensible → auto-déclenchements. Trop insensible → non-déclenchements.<br>
+  <strong>Régler toujours le plus sensible sans auto-déclenchement.</strong>
+</div>
+
+<h3>CPAP — Continuous Positive Airway Pressure</h3>
+<p>Pression positive continue sans aide inspiratoire. Le patient fait tout le travail respiratoire. Utilisé pour les <strong>tests de ventilation spontanée</strong> (TVS) avant extubation.</p>`,
+
+// ────────────────────────────────────────────────
+reglages:`<h2>03 — RÉGLAGES INITIAUX & STRATÉGIE ARDSNet</h2>
+
+<h3>Réglages de base à l'intubation</h3>
+<table class="kv">
+  <tr><td>Volume courant (Vt)</td><td><em>8–10 mL/kg PI</em> pour poumon sain · 6 mL/kg PI pour SDRA</td></tr>
+  <tr><td>Fréquence respiratoire</td><td><em>14–18 /min</em> pour adulte standard</td></tr>
+  <tr><td>PEEP initiale</td><td><em>5 cmH₂O</em> par défaut · adapter selon pathologie</td></tr>
+  <tr><td>FiO₂ initiale</td><td><em>100%</em> à l'intubation → titrer rapidement à SpO₂ 94-98%</td></tr>
+  <tr><td>Ratio I:E</td><td><em>1:2</em> standard (33% inspiration, 67% expiration)</td></tr>
+  <tr><td>Mode initial</td><td>VCV le plus souvent (Vt garanti)</td></tr>
+</table>
+
+<h3>Calcul du Poids Idéal (PI)</h3>
+<div class="fbox">
+  <div class="eq">♂ PI = 50 + 0.91 × (taille cm − 152.4)</div>
+  <div class="eq2">♀ PI = 45.5 + 0.91 × (taille cm − 152.4)</div>
+  <div class="comment">Toujours baser le Vt sur le PI, jamais le poids réel</div>
+  <div class="comment">Un obèse à 120 kg peut avoir un PI de 70 kg → Vt = 420 mL en SDRA</div>
+</div>
+
+<h3>Protocole ARDSNet (NEJM 2000)</h3>
+<p>L'étude ARDSNet a démontré une réduction de mortalité de 9% absolus en limitant Vt à 6 mL/kg PI vs 12 mL/kg. C'est la référence mondiale pour la ventilation protectrice.</p>
+
+<div class="ok-box">
+  <strong>Objectifs stricts :</strong><br>
+  → Vt : <strong>6 mL/kg PI</strong> (tolérer jusqu'à 8 si Pplat &lt; 28)<br>
+  → Pplat : <strong>≤ 30 cmH₂O</strong><br>
+  → Driving pressure : <strong>&lt; 15 cmH₂O</strong> (Amato 2015)<br>
+  → SpO₂ : <strong>88-95%</strong> (hypoxémie permissive)<br>
+  → pH : <strong>≥ 7.30</strong> (hypercapnie permissive acceptée)
+</div>
+
+<h3>Tables PEEP/FiO₂ ARDSNet</h3>
+<table class="kv">
+  <tr><td>FiO₂ 30-40%</td><td>PEEP 5-8 cmH₂O</td></tr>
+  <tr><td>FiO₂ 40-50%</td><td>PEEP 8-10 cmH₂O</td></tr>
+  <tr><td>FiO₂ 50-70%</td><td>PEEP 10-14 cmH₂O (table haute-PEEP)</td></tr>
+  <tr><td>FiO₂ 70-80%</td><td>PEEP 14-18 cmH₂O</td></tr>
+  <tr><td>FiO₂ 80-100%</td><td>PEEP 18-24 cmH₂O</td></tr>
+</table>
+
+<h3>Ventilation en BPCO</h3>
+<div class="warn-box">
+  <div class="wb-title">⚠ SPÉCIFICITÉS BPCO</div>
+  Objectif SpO₂ : <strong>88-92%</strong> (éviter la dépression du drive hypoxique à long terme)<br>
+  FR : <strong>10-14/min</strong> maximum pour limiter l'auto-PEEP<br>
+  Ratio I:E : <strong>1:3 à 1:4</strong> (Te long pour permettre l'expiration complète)<br>
+  PEEP extrinsèque : <strong>50-80% de l'auto-PEEP mesurée</strong> pour faciliter le déclenchement<br>
+  Bronchodilatateurs en nébulisation sur circuit ventilateur
+</div>
+
+<h3>Vérifications systématiques après réglage</h3>
+<p>1. Vérifier Pplat (pause télé-inspiratoire 0.5s) → &lt; 30 cmH₂O<br>
+2. Calculer driving pressure (Pplat − PEEP) → &lt; 15 cmH₂O<br>
+3. Vérifier Te ≥ 3τ (auto-PEEP)<br>
+4. Contrôler gazométrie à H1 puis H4<br>
+5. Surveiller adaptation au ventilateur</p>`,
+
+// ────────────────────────────────────────────────
+sevrage:`<h2>04 — SEVRAGE DE LA VENTILATION MÉCANIQUE</h2>
+
+<h3>Définitions</h3>
+<table class="kv">
+  <tr><td>Sevrage simple</td><td>Réussite du 1er TVS, extubation sans difficulté (50% des patients)</td></tr>
+  <tr><td>Sevrage difficile</td><td>Échec du 1er TVS, succès au plus tard au 3e TVS à J7</td></tr>
+  <tr><td>Sevrage prolongé</td><td>Plus de 3 TVS échoués ou &gt; 7 jours après le 1er TVS</td></tr>
+</table>
+
+<h3>Prérequis au Test de Ventilation Spontanée (TVS)</h3>
+<div class="ok-box">
+  ✓ Cause de l'intubation résolue ou en voie de résolution<br>
+  ✓ SpO₂ ≥ 92% avec FiO₂ ≤ 40% et PEEP ≤ 8 cmH₂O<br>
+  ✓ Hémodynamique stable (pas ou peu de vasopresseurs)<br>
+  ✓ Patient éveillé, coopérant (RASS 0 à −1)<br>
+  ✓ Effort inspiratoire efficace<br>
+  ✓ Pas de fièvre &gt; 38.5°C, pas d'acidose sévère
+</div>
+
+<h3>Critères prédictifs de sevrage</h3>
+
+<div class="fbox">
+  <div class="f-title">RSBI — RAPID SHALLOW BREATHING INDEX</div>
+  <div class="eq">RSBI = Fréquence Respiratoire (spont.) / Vt (L)</div>
+  <div class="comment">Mesuré sur 1 min en VS sans aide</div>
+  <div class="eq2">RSBI &lt; 105 /min/L → sevrage probable (Se 97%, Sp 64%)</div>
+  <div class="eq3">RSBI &gt; 105 /min/L → échec probable</div>
+  <div class="comment">Yang & Tobin, NEJM 1991</div>
+</div>
+
+<div class="fbox">
+  <div class="f-title">P0.1 — PRESSION D'OCCLUSION À 0.1 SECONDE</div>
+  <div class="eq">P0.1 = chute de pression dans les 100 ms suivant l'occlusion des VA</div>
+  <div class="comment">Reflet du drive respiratoire central (effort neuromuscul.)</div>
+  <div class="eq2">P0.1 : 1–3 cmH₂O → sevrage favorable</div>
+  <div class="eq3">P0.1 &lt; 1 cmH₂O → drive insuffisant (dépression SNC, curarisation)</div>
+  <div class="eq3">P0.1 &gt; 6 cmH₂O → effort excessif (charge ↑ ou réserve ↓)</div>
+</div>
+
+<div class="fbox">
+  <div class="f-title">PImax — PRESSION INSPIRATOIRE MAXIMALE</div>
+  <div class="eq">PImax (ou MIP) mesurée sur occlusion prolongée 20 secondes</div>
+  <div class="eq2">PImax &gt; −30 cmH₂O → réserve musculaire suffisante</div>
+</div>
+
+<h3>Conduite du TVS</h3>
+<p><strong>Méthodes équivalentes :</strong> pièce en T (30 min) ou CPAP/VS-AI faible (PS 5-7 cmH₂O + PEEP 5 cmH₂O, 30-120 min)</p>
+
+<div class="warn-box">
+  <div class="wb-title">CRITÈRES D'ÉCHEC DU TVS</div>
+  FR &gt; 35/min ou &lt; 8/min · SpO₂ &lt; 90% · PaO₂ &lt; 60 mmHg · pH &lt; 7.32<br>
+  PA systolique &gt; 180 ou &lt; 90 mmHg · Agitation, sueurs, troubles conscience<br>
+  Tirage intercostal, paradoxe abdomino-thoracique
+</div>
+
+<h3>Stratégie de sevrage en VSAI</h3>
+<table class="kv">
+  <tr><td>Phase 1 (post-sédation)</td><td>PS 16-20 cmH₂O · PEEP 8-10</td></tr>
+  <tr><td>Phase 2 (sevrage)</td><td>PS 12 → 10 → 8 cmH₂O · PEEP 5-8</td></tr>
+  <tr><td>Phase 3 (pré-extubation)</td><td>PS 5-7 cmH₂O · PEEP 5 · TVS si bien toléré</td></tr>
+  <tr><td>Critères extubation</td><td>TVS réussi + toux efficace + sécrétions gérables</td></tr>
+</table>
+
+<div class="memo">
+  <div class="memo-title">📌 MNÉMOTECHNIQUE SEVRAGE</div>
+  <strong>STOP-BANG ventilatoire :</strong><br>
+  S — SpO₂ ≥ 92% sous FiO₂ ≤ 40%<br>
+  T — Tousseur efficace<br>
+  O — Origine de l'intubation résolue<br>
+  P — PEEP ≤ 8, Pression-support ≤ 8<br>
+  → Si 4/4 : tenter le TVS
+</div>`,
+
+// ────────────────────────────────────────────────
+alarmes:`<h2>05 — ALARMES VENTILATOIRES & DÉPANNAGE</h2>
+
+<h3>Principe général</h3>
+<p>Face à une alarme ventilateur, la règle est d'abord de <strong>ventiler manuellement au masque</strong> si le patient est en détresse, puis de diagnostiquer méthodiquement. Ne jamais silencer une alarme sans en comprendre l'origine.</p>
+
+<div class="warn-box">
+  <div class="wb-title">⚠ RÉFLEXE EN CAS D'ALARME AVEC DÉSATURATION</div>
+  1. Déconnecter du ventilateur<br>
+  2. Ventiler au BAVU (100% O₂)<br>
+  3. Ausculter + vérifier visibilité du thorax<br>
+  4. Aspirations trachéales<br>
+  5. Diagnostiquer et corriger<br>
+  6. Reconnecter une fois le problème résolu
+</div>
+
+<h3>Alarme Haute Pression</h3>
+<table class="kv">
+  <tr><td>Déclenchement</td><td>Ppeak &gt; limite réglée (ex : 40 cmH₂O)</td></tr>
+  <tr><td>Causes fréquentes</td><td>Bronchospasme · Sécrétions · Morsure sonde · Toux · Patient en lutte</td></tr>
+  <tr><td>Ppeak ↑, Pplat stable</td><td>→ Problème <strong>résistif</strong> (bronchospasme, sécrétions)</td></tr>
+  <tr><td>Ppeak ↑, Pplat ↑</td><td>→ Problème <strong>compliance</strong> (atélectasie, pneumothorax, épanchement, SDRA)</td></tr>
+  <tr><td>Conduite</td><td>Aspiration · Bronchodilatateurs · Vérifier le circuit · Sedation si lutte</td></tr>
+</table>
+
+<h3>Alarme Basse Pression / Fuite</h3>
+<table class="kv">
+  <tr><td>Causes</td><td>Déconnexion · Ballonnet dégonflé · Circuit fendu · Extubation accidentelle</td></tr>
+  <tr><td>Conduite</td><td>Vérifier toutes les connexions · Contrôler pression ballonnet (25-30 cmH₂O) · Ausculter</td></tr>
+</table>
+
+<h3>Alarme Apnée</h3>
+<table class="kv">
+  <tr><td>Définition</td><td>Absence d'effort respiratoire pendant &gt; délai réglé (10-20s)</td></tr>
+  <tr><td>Causes</td><td>Sédation trop profonde · Curarisation · Lésion neurologique centrale</td></tr>
+  <tr><td>Conduite</td><td>Passer en mode contrôlé · Évaluer niveau de sédation · Stimuler le patient</td></tr>
+</table>
+
+<h3>Alarme Volume Expiré Bas</h3>
+<table class="kv">
+  <tr><td>Causes</td><td>Fuite sur circuit · Ballonnet · Volume courant insuffisant</td></tr>
+  <tr><td>Attention</td><td>En VSAI : Vt spontané trop faible → augmenter PS ou passer en mode contrôlé</td></tr>
+</table>
+
+<h3>Diagnostic différentiel : le patient désature sous VM</h3>
+<p>Méthode DOPE :</p>
+<table class="kv">
+  <tr><td><strong>D</strong>éplacement</td><td>Sonde déplacée (intra-bronchique droit ++) ou extubée</td></tr>
+  <tr><td><strong>O</strong>bstruction</td><td>Bouchon muqueux, morsure, plicature du circuit</td></tr>
+  <tr><td><strong>P</strong>neumothorax</td><td>Surtout si trauma, haute PEEP, emphysème bulleux</td></tr>
+  <tr><td><strong>E</strong>quipment</td><td>Panne ventilateur, déconnexion, fuite O₂, filtre obstrué</td></tr>
+</table>
+
+<div class="memo">
+  <div class="memo-title">📌 PRESSION BALLONNET</div>
+  Cible : <strong>25–30 cmH₂O</strong><br>
+  Inférieure : risque de microaspiration et pneumonie<br>
+  Supérieure : ischémie muqueuse trachéale → sténose secondaire<br>
+  Contrôler toutes les 8h (manomètre dédié)
+</div>`,
+
+// ────────────────────────────────────────────────
+patho:`<h2>06 — SPÉCIFICITÉS PAR PATHOLOGIE</h2>
+
+<h3>SDRA — Syndrome de Détresse Respiratoire Aiguë</h3>
+
+<p><strong>Critères de Berlin (2012) :</strong></p>
+<table class="kv">
+  <tr><td>Délai</td><td>Début aigu (&lt; 1 semaine) après agression clinique</td></tr>
+  <tr><td>Imagerie</td><td>Opacités bilatérales non expliquées par épanchement/atélectasie/nodules</td></tr>
+  <tr><td>Origine</td><td>Non expliqué par insuffisance cardiaque (PAPO &lt; 18 ou BNP)</td></tr>
+  <tr><td>SDRA léger</td><td>PaO₂/FiO₂ = <span class="vp">200–300</span> sous PEEP ≥ 5</td></tr>
+  <tr><td>SDRA modéré</td><td>PaO₂/FiO₂ = <span class="vp">100–200</span> sous PEEP ≥ 5</td></tr>
+  <tr><td>SDRA sévère</td><td>PaO₂/FiO₂ = <span class="vp">&lt; 100</span> sous PEEP ≥ 5</td></tr>
+</table>
+
+<div class="ok-box">
+  <strong>Ventilation protectrice SDRA :</strong><br>
+  → Vt = <strong>6 mL/kg PI</strong> (tolérer 4-8 selon Pplat)<br>
+  → Pplat ≤ <strong>30 cmH₂O</strong> · Driving P &lt; <strong>15 cmH₂O</strong><br>
+  → PEEP optimisée (table ARDSNet ou manœuvre de recrutement)<br>
+  → Hypercapnie permissive si pH &gt; 7.25<br>
+  → Décubitus ventral si PaO₂/FiO₂ &lt; 150 pendant ≥ 16h/j (Guérin 2013, NEJM)<br>
+  → Curares 48h si PaO₂/FiO₂ &lt; 150 (ACURASYS 2010)<br>
+  → NO inhalé si HTAP associée
+</div>
+
+<h3>BPCO décompensé</h3>
+<div class="warn-box">
+  <div class="wb-title">DANGERS SPÉCIFIQUES</div>
+  Auto-PEEP → hyperinflation dynamique → ↓ débit cardiaque, arrêt circulatoire<br>
+  Alcalose métabolique de compensation → shift droite courbe dissociation O₂<br>
+  Dépendance au CO₂ comme stimulus ventilatoire (à long terme)
+</div>
+<table class="kv">
+  <tr><td>Vt</td><td>7-8 mL/kg PI (pas trop bas : espace mort élevé)</td></tr>
+  <tr><td>FR</td><td><em>10-14/min maximum</em></td></tr>
+  <tr><td>I:E</td><td><em>1:3 à 1:4</em> (Te long ++)</td></tr>
+  <tr><td>PEEP</td><td>4-5 cmH₂O (50-80% auto-PEEP mesurée)</td></tr>
+  <tr><td>SpO₂ cible</td><td><em>88-92%</em></td></tr>
+  <tr><td>Attention</td><td>PaCO₂ cible = PaCO₂ de base du patient, pas 40 mmHg !</td></tr>
+</table>
+
+<h3>Asthme aigu grave</h3>
+<table class="kv">
+  <tr><td>Résistance</td><td>Très élevée (50-100 cmH₂O/L/s)</td></tr>
+  <tr><td>Stratégie</td><td>"Permissive hypoventilation" : FR 8-12/min · Vt 6-8 mL/kg</td></tr>
+  <tr><td>PEEP</td><td>0-5 cmH₂O au début (auto-PEEP élevée)</td></tr>
+  <tr><td>FiO₂</td><td>100% initialement</td></tr>
+  <tr><td>Traitement</td><td>Bronchodilatateurs en nébulisation (Salbutamol 5mg/h) · Corticoïdes IV · MgSO₄</td></tr>
+</table>
+
+<div class="warn-box">
+  <div class="wb-title">⚠ ASTHME : PAUSE TÉLÉ-EXPIRATOIRE SYSTÉMATIQUE</div>
+  À l'intubation d'un asthmatique : mesurer l'auto-PEEP dès le premier cycle.<br>
+  En cas d'arrêt circulatoire post-intubation → déconnecter 30 secondes du ventilateur<br>
+  (lever l'hyperinflation dynamique) avant d'écarter un pneumothorax.
+</div>
+
+<h3>Pneumopathie infectieuse sévère</h3>
+<table class="kv">
+  <tr><td>Sans critères SDRA</td><td>Vt 8 mL/kg PI · PEEP 5 · FiO₂ titrée SpO₂ 94-98%</td></tr>
+  <tr><td>Avec critères SDRA</td><td>Stratégie SDRA (voir ci-dessus)</td></tr>
+  <tr><td>Prévention VAP</td><td>Tête de lit 30° · hygiène mains · aspiration sus-glottique · sevrage quotidien</td></tr>
+</table>
+
+<h3>Traumatisé crânien grave</h3>
+<table class="kv">
+  <tr><td>PaCO₂ cible</td><td><em>35-40 mmHg</em> (éviter hyperventilation sauf HTIC aiguë)</td></tr>
+  <tr><td>SpO₂ cible</td><td><em>≥ 95%</em> (pas d'hypoxémie permissive)</td></tr>
+  <tr><td>PEEP</td><td>5 cmH₂O (PEEP ↑ → ↑ PIC via ↑ PVC)</td></tr>
+  <tr><td>Décubitus</td><td>Tête à 30°, axe neutre</td></tr>
+</table>`
+};
+
+// ═══════════════════════════════════════════════════
+// RENDU FICHES
+// ═══════════════════════════════════════════════════
+const FICHE_LIST=[
+  {id:"physio",   label:"01 · Physio"},
+  {id:"modes",    label:"02 · Modes"},
+  {id:"reglages", label:"03 · Réglages"},
+  {id:"sevrage",  label:"04 · Sevrage"},
+  {id:"alarmes",  label:"05 · Alarmes"},
+  {id:"patho",    label:"06 · Patho"},
+];
+
+function renderFiches(){
+  const nav=FICHE_LIST.map(f=>
+    `<button class="fnav-btn${S.fiche===f.id?" active":""}" onclick="S.fiche='${f.id}';refresh()">${f.label}</button>`
+  ).join("");
+  return`
+  <div class="fiche-nav">${nav}</div>
+  <div class="card fiche active">${FICHES[S.fiche]||"Contenu à venir."}</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// MOTEUR DE RENDU
+// ═══════════════════════════════════════════════════
+function refresh(){
+  const sc=SC[S.scen],m=MD[S.mode];
+  // Header badges
+  document.getElementById("hdr-badges").innerHTML=
+    `<span class="badge ${sc.bcls}">${sc.label}</span><span class="badge b-cyan">${m.label}</span>`;
+  // Toolbar : masquer pour fiches
+  document.getElementById("toolbar-wrap").style.display=S.tab==="fiches"?"none":"block";
+  // Contenu
+  const el=document.getElementById("main-content");
+  if(S.tab==="courbes")     el.innerHTML=renderCourbes();
+  else if(S.tab==="params") el.innerHTML=renderParams();
+  else if(S.tab==="calcul") el.innerHTML=renderCalc();
+  else if(S.tab==="async")  el.innerHTML=renderAsync();
+  else if(S.tab==="fiches") el.innerHTML=renderFiches();
+  // Courbes canvas
+  if(S.tab==="courbes"){
+    requestAnimationFrame(()=>{
+      const d=genCurves();
+      drawWave("cv-p",d.P,"#00e5ff");
+      drawWave("cv-q",d.Q,"#00e676");
+      drawWave("cv-v",d.V,"#ff6d9d");
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ÉVÉNEMENTS
+// ═══════════════════════════════════════════════════
+document.getElementById("tabbar").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");if(!btn)return;
+  S.tab=btn.dataset.tab;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  refresh();
+});
+document.getElementById("mode-btns").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-mode]");if(!btn)return;
+  S.mode=btn.dataset.mode;
+  document.querySelectorAll("#mode-btns .btn").forEach(b=>b.className="btn");
+  btn.className="btn "+MD[S.mode].acls;
+  refresh();
+});
+document.getElementById("scen-btns").addEventListener("click",e=>{
+  const btn=e.target.closest("[data-scen]");if(!btn)return;
+  S.scen=btn.dataset.scen;
+  document.querySelectorAll("#scen-btns .btn").forEach(b=>b.className="btn");
+  btn.className="btn "+SC[S.scen].bcls2;
+  refresh();
+});
+window.addEventListener("resize",()=>{
+  if(S.tab==="courbes")requestAnimationFrame(()=>{
+    const d=genCurves();
+    drawWave("cv-p",d.P,"#00e5ff");
+    drawWave("cv-q",d.Q,"#00e676");
+    drawWave("cv-v",d.V,"#ff6d9d");
+  });
+});
+
+// ═══════════════════════════════════════════════════
+// INIT + SERVICE WORKER OFFLINE
+// ═══════════════════════════════════════════════════
+refresh();
+
+function toast(msg,dur=3500){
+  const t=document.getElementById("pwa-toast");
+  t.textContent=msg;t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),dur);
+}
+
+if("serviceWorker" in navigator){
+  const swCode=`
+const CACHE="ventilsim-v2";
+self.addEventListener("install",e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll([location.pathname])).catch(()=>{}));
+  self.skipWaiting();
+});
+self.addEventListener("activate",e=>{
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener("fetch",e=>{
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+    const c=res.clone();
+    caches.open(CACHE).then(cache=>cache.put(e.request,c));
+    return res;
+  }).catch(()=>caches.match(e.request))));
+});
+`;
+  const blob=new Blob([swCode],{type:"application/javascript"});
+  navigator.serviceWorker.register(URL.createObjectURL(blob),{scope:"/"})
+    .then(()=>{setTimeout(()=>toast("✓ Disponible hors ligne"),1500);})
+    .catch(()=>{});
+}
+</script>
+</body>
+</html>
