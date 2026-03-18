@@ -7,19 +7,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="VentilSim"/>
 <meta name="theme-color" content="#04070f"/>
-<title>VentilSim</title>
+<title>VentilSim v3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --cyan:#00e5ff;--green:#00e676;--pink:#ff6d9d;--amber:#ffca28;--red:#ff5252;--orange:#ff9800;
+  --cyan:#00e5ff;--green:#00e676;--pink:#ff6d9d;--amber:#ffca28;--red:#ff5252;--orange:#ff9800;--purple:#ce93d8;
   --bg:#04070f;--bg2:#060b16;--bg3:#030610;--bg4:#040810;
   --border:#0a1828;--border2:#0d2035;
   --text:#c5cfe0;--muted:#607080;--dim:#1e3a52;--dimmer:#0a2030
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;overflow-x:hidden}
 #app{display:flex;flex-direction:column;min-height:100vh;min-height:-webkit-fill-available}
-
-/* ── HEADER ── */
 header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;padding-top:max(12px,env(safe-area-inset-top))}
 .logo{font-family:monospace;font-size:15px;font-weight:700;color:var(--cyan);letter-spacing:4px}
 .logo span{color:#1a3050;font-weight:300}
@@ -29,14 +27,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .b-cyan{background:#00e5ff10;border:1px solid #00e5ff30;color:var(--cyan)}
 .b-red{background:#ff525210;border:1px solid #ff525230;color:var(--red)}
 .b-amber{background:#ffca2810;border:1px solid #ffca2830;color:var(--amber)}
-
-/* ── TABS ── */
+.b-purple{background:#ce93d810;border:1px solid #ce93d830;color:var(--purple)}
 .tabbar{display:flex;background:var(--bg3);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;scrollbar-width:none}
 .tabbar::-webkit-scrollbar{display:none}
-.tab{padding:10px 13px;font-family:monospace;font-size:9px;letter-spacing:1.5px;color:#2a4060;background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;flex-shrink:0}
+.tab{padding:10px 12px;font-family:monospace;font-size:9px;letter-spacing:1.5px;color:#2a4060;background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;flex-shrink:0}
 .tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
-
-/* ── TOOLBAR ── */
 .toolbar{padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0}
 .toolrow{display:flex;gap:12px;flex-wrap:wrap}
 .toolgrp{flex:1;min-width:140px}
@@ -48,54 +43,43 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .btn.ag{background:#00e67612;border-color:#00e67640;color:var(--green)}
 .btn.ap{background:#ff6d9d12;border-color:#ff6d9d40;color:var(--pink)}
 .btn.aa{background:#ffca2812;border-color:#ffca2840;color:var(--amber)}
-
-/* ── MAIN ── */
 main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;padding-bottom:max(20px,env(safe-area-inset-bottom))}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-@media(max-width:620px){.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:380px){.g3{grid-template-columns:1fr}}
-
-/* ── CARDS ── */
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+@media(max-width:640px){.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:380px){.g3,.g4{grid-template-columns:1fr}}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:12px}
 .ct{font-family:monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:12px}
-
-/* ── METRICS ── */
 .mbox{background:var(--bg4);border:1px solid var(--border);border-radius:3px;padding:8px 6px;text-align:center}
 .mbox.warn{border-color:#ff525230;background:#ff52520a}
 .mbox.caut{border-color:#ffca2830;background:#ffca280a}
+.mbox.ok{border-color:#00e67630;background:#00e6760a}
 .mv{font-family:monospace;font-size:20px;font-weight:700;line-height:1}
 .ml{font-family:monospace;font-size:7px;letter-spacing:1px;color:#2a4060;margin-top:4px}
 .mu{font-family:monospace;font-size:7px;color:#1a3050;margin-top:1px}
-
-/* ── ALERTS ── */
 .al{border-radius:3px;padding:8px 12px;margin-bottom:8px;font-size:10px;line-height:1.7}
 .a-d{background:#ff52520a;border:1px solid #ff525228;color:#ff7070}
 .a-w{background:#ffca280a;border:1px solid #ffca2828;color:var(--amber)}
 .a-i{background:#00e5ff0a;border:1px solid #00e5ff20;color:#60c8e0}
 .a-g{background:#00e6760a;border:1px solid #00e67628;color:#60d090}
-
-/* ── WAVEFORM ── */
+.a-p{background:#ce93d80a;border:1px solid #ce93d828;color:var(--purple)}
 .chan{margin-bottom:8px}
 .ch{display:flex;justify-content:space-between;margin-bottom:3px}
 .cl{font-family:monospace;font-size:8px;letter-spacing:2px;color:#2a4060}
 .cu{font-family:monospace;font-size:8px}
 canvas.wave{display:block;width:100%;height:80px;background:#030811;border-radius:3px;border:1px solid #080f1e}
-
-/* ── SLIDERS ── */
+canvas.capno{display:block;width:100%;height:100px;background:#030811;border-radius:3px;border:1px solid #080f1e}
 .sr{margin-bottom:12px}
 .sh{display:flex;justify-content:space-between;margin-bottom:4px}
 .sn{font-size:10px;color:var(--muted)}
 .sv{font-family:monospace;font-size:12px;font-weight:700}
 input[type=range]{width:100%;cursor:pointer;height:20px;accent-color:var(--cyan)}
 .hint{font-size:8px;color:#1a3050;margin-top:2px;line-height:1.5}
-
-/* ── FORMS ── */
 select,input[type=number]{background:var(--bg4);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:3px;font-size:11px;font-family:monospace;width:100%;-webkit-appearance:none}
 .cbtn{background:var(--cyan);color:#030810;border:none;padding:9px 18px;border-radius:3px;font-family:monospace;font-size:9px;letter-spacing:2px;font-weight:700;cursor:pointer}
 .cbtn2{background:transparent;color:var(--green);border:1px solid #00e67640;padding:9px 18px;border-radius:3px;font-family:monospace;font-size:9px;letter-spacing:2px;cursor:pointer}
-
-/* ── ASYNC ── */
+.cbtn3{background:transparent;color:var(--amber);border:1px solid #ffca2840;padding:9px 18px;border-radius:3px;font-family:monospace;font-size:9px;letter-spacing:2px;cursor:pointer}
 .abadge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:2px;font-family:monospace;font-size:9px;margin:2px 4px 2px 0}
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
 .acard{border-radius:5px;padding:12px;margin-bottom:10px;border:1px solid var(--border);background:var(--bg2)}
@@ -103,15 +87,10 @@ select,input[type=number]{background:var(--bg4);border:1px solid var(--border);c
 @media(max-width:480px){.agrid{grid-template-columns:1fr}}
 .ablbl{font-family:monospace;font-size:7px;letter-spacing:2px;color:#2a4060;margin-bottom:3px}
 .abval{font-size:10px;color:#7090a8;line-height:1.6}
-
-/* ── FICHES THÉORIQUES ── */
+/* FICHES */
 .fiche-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .fnav-btn{padding:6px 12px;font-family:monospace;font-size:9px;letter-spacing:1px;background:var(--bg4);border:1px solid var(--border);color:#2a4060;cursor:pointer;border-radius:3px;transition:all .15s;white-space:nowrap}
 .fnav-btn.active{background:#00e5ff12;border-color:#00e5ff40;color:var(--cyan)}
-.fiche{display:none}
-.fiche.active{display:block}
-
-/* Sections dans les fiches */
 .fiche h2{font-size:13px;font-weight:600;color:var(--cyan);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);font-family:monospace;letter-spacing:2px}
 .fiche h3{font-size:11px;font-weight:600;color:#80b0c8;margin:14px 0 8px;font-family:monospace;letter-spacing:1px}
 .fiche p{font-size:11px;color:#8090a0;line-height:1.8;margin-bottom:8px}
@@ -120,8 +99,6 @@ select,input[type=number]{background:var(--bg4);border:1px solid var(--border);c
 .fiche li::marker{color:var(--cyan)}
 .fiche strong{color:var(--text);font-weight:600}
 .fiche em{color:var(--amber);font-style:normal}
-
-/* Formule box */
 .fbox{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;padding:10px 14px;margin:10px 0;font-family:monospace;font-size:10px;line-height:2}
 .fbox .f-title{font-size:8px;letter-spacing:2px;color:#2a4060;margin-bottom:6px}
 .fbox .eq{color:var(--cyan)}
@@ -129,26 +106,32 @@ select,input[type=number]{background:var(--bg4);border:1px solid var(--border);c
 .fbox .eq3{color:var(--pink)}
 .fbox .eq4{color:var(--amber)}
 .fbox .comment{color:var(--dim);font-size:9px}
-
-/* Key-value tableau */
 .kv{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:10px}
 .kv td{padding:5px 8px;border-bottom:1px solid var(--border)}
-.kv td:first-child{color:#2a4060;font-family:monospace;letter-spacing:.5px;width:45%}
+.kv td:first-child{color:#2a4060;font-family:monospace;letter-spacing:.5px;width:42%}
 .kv td:last-child{color:var(--text)}
 .kv tr:last-child td{border-bottom:none}
-
-/* Encadré mnémotechnique */
-.memo{background:#00e5ff08;border:1px solid #00e5ff20;border-left:3px solid var(--cyan);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a8b8;line-height:1.8}
+.memo{background:#00e5ff08;border:1px solid #00e5ff20;border-left:3px solid var(--cyan);border-radius:0 3px 3px 0;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a8b8;line-height:1.8}
 .memo .memo-title{font-family:monospace;font-size:8px;letter-spacing:2px;color:var(--cyan);margin-bottom:5px}
-.warn-box{background:#ff52520a;border:1px solid #ff525225;border-left:3px solid var(--red);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#c07070;line-height:1.8}
+.warn-box{background:#ff52520a;border:1px solid #ff525225;border-left:3px solid var(--red);border-radius:0 3px 3px 0;padding:10px 12px;margin:10px 0;font-size:10px;color:#c07070;line-height:1.8}
 .warn-box .wb-title{font-family:monospace;font-size:8px;letter-spacing:2px;color:var(--red);margin-bottom:5px}
-.ok-box{background:#00e6760a;border:1px solid #00e67625;border-left:3px solid var(--green);border-radius:3px;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a888;line-height:1.8}
-
-/* Tag valeur normale */
+.ok-box{background:#00e6760a;border:1px solid #00e67625;border-left:3px solid var(--green);border-radius:0 3px 3px 0;padding:10px 12px;margin:10px 0;font-size:10px;color:#70a888;line-height:1.8}
+.amber-box{background:#ffca280a;border:1px solid #ffca2825;border-left:3px solid var(--amber);border-radius:0 3px 3px 0;padding:10px 12px;margin:10px 0;font-size:10px;color:#a09060;line-height:1.8}
+.purple-box{background:#ce93d80a;border:1px solid #ce93d825;border-left:3px solid var(--purple);border-radius:0 3px 3px 0;padding:10px 12px;margin:10px 0;font-size:10px;color:#9070a0;line-height:1.8}
 .vn{display:inline-block;background:#00e5ff10;border:1px solid #00e5ff25;color:var(--cyan);font-family:monospace;font-size:9px;padding:1px 7px;border-radius:2px;margin:1px}
 .vp{display:inline-block;background:#ff52520f;border:1px solid #ff525225;color:#ff7070;font-family:monospace;font-size:9px;padding:1px 7px;border-radius:2px;margin:1px}
-
-/* PWA toast */
+/* ISR DRUG CARD */
+.drug-card{border-radius:5px;padding:12px;margin-bottom:8px;border:1px solid var(--border)}
+.drug-name{font-family:monospace;font-size:12px;font-weight:700;margin-bottom:6px}
+.drug-dose{font-family:monospace;font-size:18px;font-weight:700;color:var(--cyan)}
+.drug-vol{font-family:monospace;font-size:11px;color:var(--green);margin-top:2px}
+.drug-note{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
+.step-badge{display:inline-block;font-family:monospace;font-size:8px;letter-spacing:1px;padding:2px 8px;border-radius:2px;margin-bottom:6px}
+/* CAPNO */
+.capno-nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.capno-btn{padding:5px 10px;font-family:monospace;font-size:9px;background:var(--bg4);border:1px solid var(--border);color:#2a4060;cursor:pointer;border-radius:3px;transition:all .15s;white-space:nowrap}
+.capno-btn.active{background:#00e67612;border-color:#00e67640;color:var(--green)}
+/* PWA */
 #pwa-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid #00e5ff30;color:var(--cyan);padding:10px 18px;border-radius:4px;font-family:monospace;font-size:10px;letter-spacing:1px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 #pwa-toast.show{opacity:1}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,.01) 2px,rgba(0,229,255,.01) 4px);pointer-events:none;z-index:9999}
@@ -159,19 +142,20 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <header>
     <div>
       <div class="logo">VENTIL<span>SIM</span></div>
-      <div class="subtitle">SIMULATEUR · EIVASION UPEC</div>
+      <div class="subtitle">SIMULATEUR · EIVASION UPEC · SAMU</div>
     </div>
     <div class="badges" id="hdr-badges"></div>
   </header>
-
   <div class="tabbar" id="tabbar">
     <button class="tab active" data-tab="courbes">COURBES</button>
-    <button class="tab" data-tab="params">PARAMÈTRES</button>
-    <button class="tab" data-tab="calcul">CALCULATEUR</button>
-    <button class="tab" data-tab="async">ASYNCHRONIES</button>
+    <button class="tab" data-tab="capno">CAPNO</button>
+    <button class="tab" data-tab="isr">🚑 ISR</button>
+    <button class="tab" data-tab="params">PARAMS</button>
+    <button class="tab" data-tab="calcul">CALCUL</button>
+    <button class="tab" data-tab="async">ASYNCH</button>
     <button class="tab" data-tab="fiches">📖 FICHES</button>
+    <button class="tab" data-tab="pharmaco">💊 PHARMACO</button>
   </div>
-
   <div class="toolbar" id="toolbar-wrap">
     <div class="toolrow">
       <div class="toolgrp">
@@ -192,50 +176,140 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
       </div>
     </div>
   </div>
-
   <main id="main-content"></main>
 </div>
 <div id="pwa-toast"></div>
-
 <script>
 // ═══════════════════════════════════════════════════
-// DONNÉES CLINIQUES
+// DONNÉES
 // ═══════════════════════════════════════════════════
 const SC={
-  normal:{label:"Poumon sain",C:60,R:8,peep:5,color:"#00e5ff",bcls:"b-cyan",bcls2:"ac",
-    desc:"Mécanique ventilatoire normale. Patient intubé pour chirurgie élective.",
-    triggers:{freq:.1,effort:"faible"}},
-  sdra:{label:"SDRA modéré",C:25,R:12,peep:10,color:"#ff5252",bcls:"b-red",bcls2:"aa",
-    desc:"Berlin 2012. Compliance ↓↓, hypoxémie réfractaire. Stratégie protectrice obligatoire.",
-    triggers:{freq:.3,effort:"intense"}},
-  bpco:{label:"BPCO décomp.",C:80,R:25,peep:5,color:"#ffca28",bcls:"b-amber",bcls2:"aa",
-    desc:"Obstruction bronchique majeure, τ élevée, risque auto-PEEP ++.",
-    triggers:{freq:.4,effort:"modéré"}}
+  normal:{label:"Poumon sain",C:60,R:8,peep:5,color:"#00e5ff",bcls:"b-cyan",bcls2:"ac",etco2_base:38,desc:"Mécanique ventilatoire normale.",triggers:{freq:.1,effort:"faible"}},
+  sdra:{label:"SDRA modéré",C:25,R:12,peep:10,color:"#ff5252",bcls:"b-red",bcls2:"aa",etco2_base:32,desc:"Berlin 2012. Compliance ↓↓, hypoxémie réfractaire.",triggers:{freq:.3,effort:"intense"}},
+  bpco:{label:"BPCO décomp.",C:80,R:25,peep:5,color:"#ffca28",bcls:"b-amber",bcls2:"aa",etco2_base:52,desc:"Obstruction bronchique majeure, τ élevée.",triggers:{freq:.4,effort:"modéré"}}
 };
 const MD={
   vcv:{label:"VCV",color:"#00e5ff",acls:"ac",full:"Ventilation Contrôlée en Volume",
-    desc:"Volume courant = variable cible imposée. Pression = résultante (dépend de C et R). Débit carré. Pression montante avec plateau télé-inspiratoire.",
-    mooc:"Sem. 2 — Pcrete = résistive (R×Flow) + élastique (Vt/C) + PEEP. Pplat = élastique seule."},
+    desc:"Volume courant imposé. Pression résultante. Débit carré. Plateau télé-inspiratoire.",
+    mooc:"Sem. 2 — Pcrete = résistive (R×Flow) + élastique (Vt/C) + PEEP."},
   vaci:{label:"VAC/VACI",color:"#00e676",acls:"ag",full:"Ventilation Assistée Contrôlée / Intermittente",
-    desc:"Cycles contrôlés garantis + cycles spontanés intercalés (toutes les 3 insufflations). Mode de transition vers sevrage.",
-    mooc:"Sem. 3 — La VACI maintient le drive respiratoire et prévient l'atrophie diaphragmatique."},
+    desc:"Cycles contrôlés garantis + cycles spontanés intercalés. Transition vers sevrage.",
+    mooc:"Sem. 3 — Maintien du drive respiratoire, prévention atrophie diaphragmatique."},
   vsai:{label:"VSAI/AI",color:"#ff6d9d",acls:"ap",full:"Ventilation Spontanée avec Aide Inspiratoire",
-    desc:"Chaque cycle déclenché par le patient. Débit décélérant. Pression plateau = PEEP + PS. Sevrage par réduction progressive de la PS.",
-    mooc:"Sem. 4 — Sevrage progressif : PS 20→15→12→8→5. Extubation possible à PS ≤ 7 cmH₂O."}
+    desc:"Chaque cycle déclenché par le patient. Plateau = PEEP + PS. Mode de sevrage.",
+    mooc:"Sem. 4 — Sevrage progressif : PS 20→15→12→8→5. Extubation si PS ≤ 7 cmH₂O."}
+};
+
+// ISR — protocoles drogues
+const ISR_PROTOCOLS={
+  etomidate_succinyl:{
+    label:"Étomidate + Succinylcholine",color:"#00e5ff",
+    context:"Protocole standard SAMU France. Patient neurologique, hémodynamique stable.",
+    steps:[
+      {step:"PRÉMÉDICATION",color:"#ce93d8",drugs:[
+        {name:"Atropine",dose_pkg:0.01,max:0.5,unit:"mg",conc:0.5,conc_unit:"mg/mL",note:"Si bradycardie anticipée ou enfant. Optionnel adulte."},
+        {name:"Fentanyl",dose_pkg:2,max:150,unit:"µg",conc:50,conc_unit:"µg/mL",note:"Prémédication analgésique 3 min avant. Atténue la réponse sympathique à l'intubation."}
+      ]},
+      {step:"INDUCTION",color:"#00e5ff",drugs:[
+        {name:"Étomidate",dose_pkg:0.3,max:20,unit:"mg",conc:2,conc_unit:"mg/mL",note:"Stabilité hémodynamique ++. Attention : inhibition corticosurrénalienne (dose unique acceptable)."}
+      ]},
+      {step:"CURARE",color:"#ff6d9d",drugs:[
+        {name:"Succinylcholine",dose_pkg:1.5,max:150,unit:"mg",conc:50,conc_unit:"mg/mL",note:"Délai d'action 45-60s. Contre-indications : hyperkaliémie, brûlé >48h, alité >72h, trauma médullaire."}
+      ]},
+      {step:"ENTRETIEN",color:"#00e676",drugs:[
+        {name:"Midazolam",dose_pkg:0.05,max:5,unit:"mg",conc:5,conc_unit:"mg/mL",note:"Sédation post-intubation. Titrer par bolus de 1mg."},
+        {name:"Morphine",dose_pkg:0.1,max:10,unit:"mg",conc:1,conc_unit:"mg/mL",note:"Analgésie post-intubation. Titrer."}
+      ]}
+    ]
+  },
+  ketamine_succinyl:{
+    label:"Kétamine + Succinylcholine",color:"#ffca28",
+    context:"Patient instable, état de choc, bronchospasme, asthme. Maintien du tonus sympathique.",
+    steps:[
+      {step:"INDUCTION",color:"#ffca28",drugs:[
+        {name:"Kétamine",dose_pkg:1.5,max:150,unit:"mg",conc:50,conc_unit:"mg/mL",note:"Bronchodilatateur, maintien PA. Attention : HTIC (augmente PIC), psychoses actives. 2 mg/kg si choc sévère."}
+      ]},
+      {step:"CURARE",color:"#ff6d9d",drugs:[
+        {name:"Succinylcholine",dose_pkg:1.5,max:150,unit:"mg",conc:50,conc_unit:"mg/mL",note:"Mêmes contre-indications. Délai 45-60s."}
+      ]},
+      {step:"ENTRETIEN",color:"#00e676",drugs:[
+        {name:"Kétamine IVSE",dose_pkg:1,max:null,unit:"mg/kg/h",conc:null,conc_unit:null,note:"Sédation-analgésie par IVSE. Idéal en préhospitalier (pas de dépression HD)."},
+        {name:"Midazolam",dose_pkg:0.05,max:5,unit:"mg",conc:5,conc_unit:"mg/mL",note:"Adjuvant sédatif si besoin."}
+      ]}
+    ]
+  },
+  propofol_roc:{
+    label:"Propofol + Rocuronium",color:"#ce93d8",
+    context:"Bloc opératoire, patient stable, estomac vide. Exceptionnel en préhospitalier.",
+    steps:[
+      {step:"INDUCTION",color:"#ce93d8",drugs:[
+        {name:"Propofol",dose_pkg:2,max:200,unit:"mg",conc:10,conc_unit:"mg/mL",note:"Dépression HD ! Réduire à 1 mg/kg si instable. Éviter en préhospitalier."}
+      ]},
+      {step:"CURARE",color:"#ff6d9d",drugs:[
+        {name:"Rocuronium",dose_pkg:1.2,max:120,unit:"mg",conc:10,conc_unit:"mg/mL",note:"ISR haute dose. Délai 60s. Réversible par sugammadex."}
+      ]},
+      {step:"REVERSAL",color:"#00e676",drugs:[
+        {name:"Sugammadex",dose_pkg:16,max:200,unit:"mg",conc:200,conc_unit:"mg/mL",note:"Inversion immédiate rocuronium en cas d'impossibilité d'intuber/ventiler (CICV). 16 mg/kg."}
+      ]},
+      {step:"ENTRETIEN",color:"#00e676",drugs:[
+        {name:"Propofol IVSE",dose_pkg:null,max:null,unit:"3-6 mg/kg/h",conc:null,conc_unit:null,note:"Sédation continue IVSE bloc op."}
+      ]}
+    ]
+  }
+};
+
+// MACOCHA score
+const MACOCHA_ITEMS=[
+  {id:"m1",label:"Mallampati III ou IV",pts:5},
+  {id:"m2",label:"Pathologie cervicale (instabilité, ankylose, halo)",pts:5},
+  {id:"m3",label:"Ouverture de bouche < 3 cm",pts:3},
+  {id:"m4",label:"Apnée du sommeil / ronflement",pts:2},
+  {id:"m5",label:"Réduction mobilité mandibule",pts:1},
+  {id:"m6",label:"Absence de dents",pts:1},
+  {id:"m7",label:"SpO₂ < 80% avant intubation",pts:1},
+  {id:"m8",label:"Anesthésiste non entraîné",pts:1},
+];
+
+// CAPNOGRAPHIE — profils
+const CAPNO_PROFILES={
+  normal:{label:"Normale",color:"#00e676",
+    etco2:38,desc:"Courbe en plateau bien défini. Phase I (débit mort anat.), phase II (mélange), phase III (plateau alvéolaire), descente verticale inspiration.",
+    shape:"normal"},
+  bronchospasme:{label:"Bronchospasme",color:"#ffca28",
+    etco2:45,desc:"Signe du requin — phase III ascendante (pente positive). Obstruction bronchique, vidange alvéolaire hétérogène. BPCO, asthme.",
+    shape:"shark"},
+  oesophagien:{label:"Intubation œsophagienne",color:"#ff5252",
+    etco2:0,desc:"Absence totale de CO₂ expiré après 3-4 cycles ou courbe s'effondrant rapidement. URGENCE : retirer et réintuber.",
+    shape:"zero"},
+  bas_debit:{label:"Bas débit / ACR",color:"#ff9800",
+    etco2:12,desc:"EtCO₂ effondré < 15 mmHg. Débit cardiaque insuffisant. Si ACR : EtCO₂ > 10 mmHg pendant MCE = indicateur de qualité compression.",
+    shape:"low"},
+  hvol:{label:"Hyperventilation",color:"#ce93d8",
+    etco2:22,desc:"EtCO₂ bas par hyperventilation. Alcalose respiratoire. Attention TC grave : cible PaCO₂ 35-40 mmHg.",
+    shape:"low"},
+  racs:{label:"RACS post-ACR",color:"#00e5ff",
+    etco2:55,desc:"Montée brutale de l'EtCO₂ > 35-40 mmHg pendant le MCE = signe de RACS. Arrêter MCE et vérifier pouls.",
+    shape:"high"},
+  disconnection:{label:"Déconnexion/Fuite",color:"#ff6d9d",
+    etco2:0,desc:"Disparition soudaine de la courbe capno. Déconnexion circuit, extubation accidentelle, fuite majeure.",
+    shape:"disconnect"}
 };
 
 // ═══════════════════════════════════════════════════
-// ÉTAT APPLICATION
+// ÉTAT
 // ═══════════════════════════════════════════════════
 const S={
   mode:"vcv",scen:"normal",tab:"courbes",
   vt:500,fr:16,peep:5,ie:.4,fio2:40,ps:12,
   cTaille:170,cSexe:"H",cPath:"normal",cResult:null,
-  fiche:"physio"
+  fiche:"physio",
+  isr_protocol:"etomidate_succinyl",isr_poids:75,isr_macocha:{},
+  capno_profile:"normal",
+  pharma_cat:"hypnotiques",pharma_drug:null
 };
 
 // ═══════════════════════════════════════════════════
-// PHYSIO — GÉNÉRATEUR DE COURBES
+// PHYSIO COURBES
 // ═══════════════════════════════════════════════════
 function genCurves(steps=280){
   const sc=SC[S.scen],C=sc.C,R=sc.R;
@@ -289,16 +363,132 @@ function drawWave(id,data,color){
   if(color==="#00e676"){const z=sy(0);ctx.strokeStyle="#1a2a40";ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(0,z);ctx.lineTo(W,z);ctx.stroke();ctx.setLineDash([]);}
   const grad=ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,color+"25");grad.addColorStop(1,color+"00");
-  ctx.beginPath();
-  data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.beginPath();data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
   ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
-  ctx.beginPath();
-  data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.beginPath();data.forEach((v,i)=>{const x=(i/(data.length-1))*W,y=sy(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
   ctx.strokeStyle=color;ctx.lineWidth=1.8;ctx.lineJoin="round";ctx.stroke();
   ctx.font="500 8px monospace";ctx.fillStyle="#1e3a52";ctx.textAlign="right";
   ctx.fillText(Math.round(mx*10)/10,W-4,12);ctx.fillText(Math.round(mn*10)/10,W-4,H-3);
 }
 
+// ═══════════════════════════════════════════════════
+// CAPNOGRAPHIE — GÉNÉRATEUR DE COURBES
+// ═══════════════════════════════════════════════════
+function drawCapno(id, profile){
+  const cv=document.getElementById(id);if(!cv)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||300,H=cv.clientHeight||100;
+  cv.width=W*dpr;cv.height=H*dpr;
+  const ctx=cv.getContext("2d");ctx.scale(dpr,dpr);
+  ctx.fillStyle="#030811";ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle="#0d1e30";ctx.lineWidth=.5;
+  [.25,.5,.75].forEach(r=>{ctx.beginPath();ctx.moveTo(0,H*r);ctx.lineTo(W,H*r);ctx.stroke()});
+  const p=CAPNO_PROFILES[profile];
+  const color=p.color;
+  const etco2=p.etco2;
+  const CYCLES=3;
+  const pts=[];
+  const cw=W/CYCLES;
+  // Ligne de base
+  const baseline=H-8;
+  const top=H-(etco2/60)*(H-20)-8;
+
+  for(let c=0;c<CYCLES;c++){
+    const x0=c*cw;
+    if(profile==="zero"||profile==="disconnect"){
+      // Ligne plate à 0
+      pts.push([x0,baseline],[x0+cw,baseline]);
+      if(profile==="disconnect"&&c===1){
+        // Un seul cycle visible puis disparition
+        pts.length=0;
+        pts.push([0,baseline],[cw*0.6,baseline],[cw*0.6,top],[cw*0.85,top],[cw*0.85,baseline]);
+        for(let i=cw;i<W;i+=2)pts.push([i,baseline]);
+        break;
+      }
+    }else if(profile==="normal"){
+      // Courbe capno normale : 4 phases
+      pts.push(
+        [x0,baseline],
+        [x0+cw*.08,baseline],           // Phase I : débit mort
+        [x0+cw*.22,top+8],              // Phase II : montée
+        [x0+cw*.35,top],                // Phase III : plateau
+        [x0+cw*.58,top],                // Fin plateau
+        [x0+cw*.62,baseline],           // Descente inspiration
+        [x0+cw,baseline]
+      );
+    }else if(profile==="shark"){
+      // Signe du requin : phase III ascendante
+      pts.push(
+        [x0,baseline],
+        [x0+cw*.08,baseline],
+        [x0+cw*.22,top+12],
+        [x0+cw*.35,top+6],
+        [x0+cw*.58,top-4],             // Phase III montante ← signe requin
+        [x0+cw*.62,baseline],
+        [x0+cw,baseline]
+      );
+    }else if(profile==="low"){
+      const t2=H-(etco2/60)*(H-20)-8;
+      pts.push(
+        [x0,baseline],
+        [x0+cw*.08,baseline],
+        [x0+cw*.22,t2+4],
+        [x0+cw*.35,t2],
+        [x0+cw*.58,t2],
+        [x0+cw*.62,baseline],
+        [x0+cw,baseline]
+      );
+    }else if(profile==="high"){
+      const t2=H-(etco2/60)*(H-20)-8;
+      pts.push(
+        [x0,baseline],
+        [x0+cw*.08,baseline],
+        [x0+cw*.22,t2+4],
+        [x0+cw*.35,t2],
+        [x0+cw*.58,t2],
+        [x0+cw*.62,baseline],
+        [x0+cw,baseline]
+      );
+    }
+  }
+
+  if(pts.length>1){
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,color+"20");grad.addColorStop(1,color+"00");
+    ctx.beginPath();pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
+    ctx.lineTo(W,baseline);ctx.lineTo(0,baseline);ctx.closePath();
+    ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin="round";ctx.stroke();
+  }
+
+  // EtCO₂ label
+  ctx.font="700 10px monospace";ctx.fillStyle=color;ctx.textAlign="left";
+  ctx.fillText("EtCO₂ = "+etco2+" mmHg",8,16);
+  // Baseline label
+  ctx.font="500 8px monospace";ctx.fillStyle="#1e3a52";ctx.textAlign="left";
+  ctx.fillText("0",4,baseline-2);
+}
+
+// ═══════════════════════════════════════════════════
+// ISR — CALCULATEUR
+// ═══════════════════════════════════════════════════
+function calcDrug(drug, poids){
+  if(!drug.dose_pkg) return null;
+  const dose=Math.round(drug.dose_pkg*poids*10)/10;
+  const dose_final=drug.max?Math.min(dose,drug.max):dose;
+  const vol=drug.conc?Math.round((dose_final/drug.conc)*10)/10:null;
+  return{dose:dose_final,vol};
+}
+
+function macochScore(){
+  return MACOCHA_ITEMS.reduce((s,item)=>s+(S.isr_macocha[item.id]?item.pts:0),0);
+}
+
+// ═══════════════════════════════════════════════════
+// CALCULS ARDSNet
+// ═══════════════════════════════════════════════════
 function calcPI(t,s){return s==="H"?50+.91*(t-152.4):45.5+.91*(t-152.4);}
 function calcARDS(t,s,p){
   const pi=calcPI(t,s),sc=SC[p];
@@ -320,7 +510,7 @@ function mbox(val,lbl,unit,warn,caut,color){
 }
 
 // ═══════════════════════════════════════════════════
-// RENDUS ONGLETS SIMULATEUR
+// RENDUS
 // ═══════════════════════════════════════════════════
 function renderCourbes(){
   const sc=SC[S.scen],m=MD[S.mode],met=getMetrics(),d=genCurves();
@@ -329,10 +519,10 @@ function renderCourbes(){
     <div class="card" style="border-color:${m.color}25">
       <div class="ct">${m.full.toUpperCase()}</div>
       <div style="font-size:11px;color:#607080;line-height:1.8;margin-bottom:10px">${m.desc}</div>
-      <div style="font-size:9px;color:#1e3a52;line-height:1.7;padding:8px 10px;background:#030810;border-radius:3px;border-left:2px solid ${m.color}40">📌 ${m.mooc}</div>
+      <div style="font-size:9px;color:#1e3a52;padding:8px 10px;background:#030810;border-radius:3px;border-left:2px solid ${m.color}40">📌 ${m.mooc}</div>
     </div>
     <div class="card">
-      <div class="ct">MÉTRIQUES TEMPS RÉEL</div>
+      <div class="ct">MÉTRIQUES</div>
       <div class="g3" style="margin-bottom:10px">
         ${mbox(met.pplat,"P PLATEAU","cmH₂O",met.pplat>30,false)}
         ${mbox(met.drv,"DRIVING P.","cmH₂O",false,met.drv>15)}
@@ -341,9 +531,9 @@ function renderCourbes(){
         ${mbox(sc.C,"COMPLIANCE","mL/cmH₂O",false,false,sc.color)}
         ${mbox(met.autoP?"RISQUE":"OK","AUTO-PEEP","τ="+Math.round(met.tau*100)/100+"s",false,met.autoP,met.autoP?"#ffca28":"#00e676")}
       </div>
-      ${met.pplat>30?`<div class="al a-d">Pplat > 30 cmH₂O — Barotraumatisme. ↓ Vt → 6 mL/kg PI (ARDSNet).</div>`:''}
-      ${met.drv>15?`<div class="al a-w">Driving P > 15 cmH₂O — Facteur de mortalité au SDRA (Amato 2015, NEJM).</div>`:''}
-      ${met.autoP?`<div class="al a-w">Auto-PEEP probable — τ=${Math.round(sc.R*sc.C)}ms. ↓ FR ou ↑ ratio I:E pour ↑ Te.</div>`:''}
+      ${met.pplat>30?`<div class="al a-d">Pplat > 30 cmH₂O — ↓ Vt → 6 mL/kg PI (ARDSNet).</div>`:''}
+      ${met.drv>15?`<div class="al a-w">Driving P > 15 cmH₂O — mortalité ↑ au SDRA (Amato 2015).</div>`:''}
+      ${met.autoP?`<div class="al a-w">Auto-PEEP probable — τ=${Math.round(sc.R*sc.C)}ms. ↓ FR ou ↑ Te.</div>`:''}
     </div>
   </div>
   <div class="card">
@@ -351,9 +541,172 @@ function renderCourbes(){
     <div class="chan"><div class="ch"><span class="cl">PRESSION</span><span class="cu" style="color:#00e5ff">cmH₂O</span></div><canvas class="wave" id="cv-p" height="80"></canvas></div>
     <div class="chan"><div class="ch"><span class="cl">DÉBIT</span><span class="cu" style="color:#00e676">L/min</span></div><canvas class="wave" id="cv-q" height="80"></canvas></div>
     <div class="chan"><div class="ch"><span class="cl">VOLUME</span><span class="cu" style="color:#ff6d9d">mL</span></div><canvas class="wave" id="cv-v" height="80"></canvas></div>
-    ${d.asyncs.length?`<div style="margin-top:8px"><div class="lbl" style="margin-bottom:5px">ASYNCHRONIES</div><div>${d.asyncs.map(asyncBadge).join("")}</div></div>`:''}
-    <div style="margin-top:10px;padding:8px 10px;background:#030810;border-radius:3px;font-family:monospace;font-size:9px;color:var(--dim);line-height:1.9">
-      ${S.mode==="vcv"?"P : résistive + plateau · Q : carré insp, négatif exp · V : rampe → exp":S.mode==="vaci"?"Cycle 1-2 : contrôlé · Cycle 3 : spontané (Vt↓, sinusoïdal)":"Effort = dépression initiale · Plateau = PEEP + "+S.ps+" cmH₂O"}
+    ${d.asyncs.length?`<div style="margin-top:8px"><div class="lbl" style="margin-bottom:4px">ASYNCHRONIES</div>${d.asyncs.map(asyncBadge).join("")}</div>`:''}
+  </div></div>`;
+}
+
+function renderCapno(){
+  const p=CAPNO_PROFILES[S.capno_profile];
+  const nav=Object.entries(CAPNO_PROFILES).map(([k,v])=>
+    `<button class="capno-btn${S.capno_profile===k?" active":""}" onclick="S.capno_profile='${k}';refresh()">${v.label}</button>`
+  ).join("");
+
+  // Interactions cœur-poumon selon profil
+  const peep_effect=`
+  <div class="card" style="margin-top:0">
+    <div class="ct">INTERACTIONS CŒUR-POUMON & PEEP</div>
+    <div style="font-size:11px;color:#607080;line-height:1.8;margin-bottom:10px">
+      La PEEP augmente la pression intrathoracique et réduit le retour veineux → impact hémodynamique direct, surtout en hypovolémie.
+    </div>
+    <div class="g2">
+      <div>
+        ${mbox("↓","PRÉCHARGE","retour veineux ↓",false,false,"#ffca28")}
+      </div>
+      <div>
+        ${mbox("↑","POST-CHARGE VD","RVP ↑ si PEEP élevée",false,false,"#ff9800")}
+      </div>
+    </div>
+    <table class="kv" style="margin-top:10px">
+      <tr><td>PEEP 5 cmH₂O</td><td style="color:#00e676">Impact HD minimal · Recommandé de principe</td></tr>
+      <tr><td>PEEP 10-15 cmH₂O</td><td style="color:#ffca28">↓ Index cardiaque possible · Surveiller PA et lactatémie</td></tr>
+      <tr><td>PEEP > 15 cmH₂O</td><td style="color:#ff5252">Choc obstructif possible · Épreuve de remplissage ± noradrénaline</td></tr>
+      <tr><td>Auto-PEEP sévère</td><td style="color:#ff5252">Collapsus circulatoire per-intubation possible · Déconnecter 30s</td></tr>
+    </table>
+    <div class="fbox" style="margin-top:8px">
+      <div class="f-title">PRESSION MOTRICE TRANSPULMONAIRE</div>
+      <div class="eq">PTP = Palv − Ppleurale (= Poesophagienne)</div>
+      <div class="comment">Si PTP expiratoire négative → risque atélectasie · PEEP insuffisante</div>
+      <div class="comment">Si PTP inspiratoire > 20 cmH₂O → VILI probable</div>
+    </div>
+    <div class="al a-i" style="margin-top:8px">
+      <strong>Ventilation post-RACS :</strong> EtCO₂ cible 35-40 mmHg · SpO₂ 94-98% (éviter hyperoxie) · PaCO₂ 35-45 · 
+      Température cible 36°C (TTM) · PAS ≥ 90 mmHg · Éviter PEEP élevée si instabilité HD
+    </div>
+  </div>`;
+
+  return`
+  <div class="capno-nav">${nav}</div>
+  <div class="card" style="border-color:${p.color}30">
+    <div class="ct">CAPNOGRAPHIE — ${p.label.toUpperCase()}</div>
+    <div class="chan">
+      <div class="ch"><span class="cl">EtCO₂</span><span class="cu" style="color:${p.color}">mmHg</span></div>
+      <canvas class="capno" id="cv-capno" height="100"></canvas>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:#607080;line-height:1.8">${p.desc}</div>
+    ${p.shape==="zero"||p.shape==="disconnect"?`<div class="al a-d" style="margin-top:8px">⚠ URGENCE — Vérifier position sonde · Ausculter · Réintuber si nécessaire</div>`:''}
+    ${p.shape==="low"&&p.etco2<15?`<div class="al a-w" style="margin-top:8px">EtCO₂ &lt; 15 mmHg pendant MCE = compressions insuffisantes ou débit cardiaque nul</div>`:''}
+    ${S.capno_profile==="racs"?`<div class="al a-g" style="margin-top:8px">EtCO₂ > 35-40 mmHg pendant MCE → RACS probable · Arrêter MCE · Vérifier pouls</div>`:''}
+    <div style="margin-top:10px">
+      <table class="kv">
+        <tr><td>Normale</td><td><span class="vn">35–45 mmHg</span></td></tr>
+        <tr><td>Intubation œsophagienne</td><td><span class="vp">≈ 0 mmHg</span> après 3-4 cycles</td></tr>
+        <tr><td>ACR / bas débit</td><td><span class="vp">&lt; 15 mmHg</span></td></tr>
+        <tr><td>RACS pendant MCE</td><td><span class="vn">montée brutale &gt; 35</span></td></tr>
+        <tr><td>BPCO / asthme</td><td>Phase III ascendante (signe du requin)</td></tr>
+        <tr><td>TC grave cible</td><td><span class="vn">35–40 mmHg</span> (PaCO₂ 35-40)</td></tr>
+      </table>
+    </div>
+  </div>
+  ${peep_effect}`;
+}
+
+function renderISR(){
+  const proto=ISR_PROTOCOLS[S.isr_protocol];
+  const poids=S.isr_poids;
+  const mscore=macochScore();
+  const mRisk=mscore>=3?"DIFFICILE":mscore>=1?"MODÉRÉ":"FACILE";
+  const mColor=mscore>=3?"#ff5252":mscore>=1?"#ffca28":"#00e676";
+
+  const protoNav=Object.entries(ISR_PROTOCOLS).map(([k,v])=>
+    `<button class="capno-btn${S.isr_protocol===k?" active":""}" onclick="S.isr_protocol='${k}';refresh()" style="border-color:${S.isr_protocol===k?v.color+"60":"var(--border)"};color:${S.isr_protocol===k?v.color:"#2a4060"}">${v.label}</button>`
+  ).join("");
+
+  const stepsHtml=proto.steps.map(step=>{
+    const drugsHtml=step.drugs.map(drug=>{
+      const calc=calcDrug(drug,poids);
+      return`<div class="drug-card" style="border-color:${step.color}30;background:#040810">
+        <div class="drug-name" style="color:${step.color}">${drug.name}</div>
+        ${calc?`<div class="drug-dose">${calc.dose} ${drug.unit}</div>
+        ${calc.vol?`<div class="drug-vol">→ ${calc.vol} mL <span style="color:#2a4060">(${drug.conc} ${drug.conc_unit})</span></div>`:''}`
+        :`<div class="drug-dose" style="font-size:13px;color:${step.color}">${drug.unit}</div>`}
+        <div class="drug-note">${drug.note}</div>
+      </div>`;
+    }).join("");
+    return`<div style="margin-bottom:14px">
+      <span class="step-badge" style="background:${step.color}15;border:1px solid ${step.color}40;color:${step.color}">${step.step}</span>
+      ${drugsHtml}
+    </div>`;
+  }).join("");
+
+  return`<div class="g2">
+  <div>
+    <div class="card">
+      <div class="ct">CALCULATEUR ISR — SAMU</div>
+      <div style="margin-bottom:12px">
+        <div class="lbl">PROTOCOLE</div>
+        <div class="capno-nav" style="margin-bottom:0">${protoNav}</div>
+        <div style="font-size:9px;color:#1e3a52;margin-top:6px;line-height:1.6">${proto.context}</div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="lbl">POIDS ESTIMÉ (kg)</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="range" min="30" max="150" step="1" value="${poids}"
+            style="flex:1;accent-color:#00e5ff" oninput="S.isr_poids=Number(this.value);refresh()">
+          <span style="font-family:monospace;font-size:16px;font-weight:700;color:#00e5ff;min-width:40px">${poids} kg</span>
+        </div>
+        <div class="hint">En préhospitalier : estimer visuellement ou Formule de Devine si mesurable</div>
+      </div>
+      <div class="warn-box" style="margin-top:0">
+        <div class="wb-title">⚠ VÉRIFICATIONS PRÉ-INTUBATION</div>
+        Aspiration fonctionnelle · O₂ 100% 3-5 min · Voie veineuse · Monitorage complet<br>
+        Position tête surélevée 20° · Laryngoscope + lame testés · Mandrin · Kit coniotomie<br>
+        Ballonnet vérifié · Second opérateur disponible · Capnomètre branché
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ct">SCORE MACOCHA — INTUBATION DIFFICILE</div>
+      <div style="margin-bottom:10px">
+        ${MACOCHA_ITEMS.map(item=>`
+        <label style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer">
+          <input type="checkbox" ${S.isr_macocha[item.id]?"checked":""} onchange="S.isr_macocha['${item.id}']=this.checked;refresh()"
+            style="accent-color:#00e5ff;width:14px;height:14px;flex-shrink:0">
+          <span style="font-size:10px;color:#7090a8;flex:1">${item.label}</span>
+          <span style="font-family:monospace;font-size:10px;color:${S.isr_macocha[item.id]?"#ff5252":"#1e3a52"}">${item.pts} pts</span>
+        </label>`).join("")}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#040810;border-radius:4px">
+        <div style="text-align:center">
+          <div style="font-family:monospace;font-size:28px;font-weight:700;color:${mColor}">${mscore}</div>
+          <div style="font-family:monospace;font-size:7px;color:#2a4060">SCORE</div>
+        </div>
+        <div>
+          <div style="font-family:monospace;font-size:12px;font-weight:700;color:${mColor}">${mRisk}</div>
+          <div style="font-size:9px;color:#2a4060;margin-top:3px">
+            ${mscore===0?"Score 0 — intubation facile probable":mscore<3?"Score 1-2 — prévoir plan B":
+            "Score ≥ 3 — intubation difficile probable · Préparer vidéolaryngoscope"}
+          </div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:#1a3050;margin-top:8px">De Jong et al., Intensive Care Med 2013 · Se 73%, Sp 89% pour intubation difficile</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">DROGUES & DOSES — ${poids} kg</div>
+    ${stepsHtml}
+    <div class="al a-w" style="margin-top:8px">
+      <strong>Réglages VM post-intubation :</strong><br>
+      Vt 6-8 mL/kg PI · FR 14-16/min · PEEP 5 · FiO₂ 100% → titrer<br>
+      EtCO₂ cible 35-40 · Ausculter symétrie · Rx thorax dès que possible
+    </div>
+    <div class="al a-p" style="margin-top:8px">
+      <strong>PLAN B intubation difficile :</strong><br>
+      1. Masque + canule de Guedel (appel à l'aide)<br>
+      2. Vidéolaryngoscope si disponible<br>
+      3. Mandrin long béquillé (Eschmann)<br>
+      4. Masque laryngé i-gel en sauvetage<br>
+      5. Coniotomie chirurgicale si CICV
     </div>
   </div></div>`;
 }
@@ -436,49 +789,29 @@ function renderCalc(){
         ${mbox(r.pp,"Pplat EST.","cmH₂O",r.pp>30,false)}
         ${mbox(r.drv,"DRIVING","cmH₂O",false,r.drv>15)}
       </div>
-      ${r.pp>30?`<div class="al a-d" style="margin-top:10px">Pplat estimée > 30. Réduire Vt à 5-6 mL/kg PI.</div>`:''}
-      <div style="margin-top:12px;padding:8px 10px;background:#030810;border-radius:3px;font-family:monospace;font-size:9px;color:var(--dim);line-height:1.9">
-        RSBI = <span style="color:${r.rsbi<105?"#00e676":"#ff5252"};font-weight:700">${r.rsbi}</span> /min/L
-        <span style="color:#0a2030"> · cible &lt; 105</span>
+      ${r.pp>30?`<div class="al a-d" style="margin-top:10px">Pplat > 30. Réduire Vt à 5-6 mL/kg PI.</div>`:''}
+      <div style="margin-top:10px;padding:8px 10px;background:#030810;border-radius:3px;font-family:monospace;font-size:9px;color:var(--dim)">
+        RSBI = <span style="color:${r.rsbi<105?"#00e676":"#ff5252"};font-weight:700">${r.rsbi}</span> /min/L · cible &lt; 105
       </div>
     </div>
-    <div class="al a-i" style="border-radius:5px;padding:12px 14px">ARDSNet 2000, NEJM : Vt 6 mL/kg PI → Pplat ≤ 30 → mortalité −9%.</div>
+    <div class="al a-i" style="border-radius:5px;padding:12px">ARDSNet 2000, NEJM : Vt 6 mL/kg PI → Pplat ≤ 30 → mortalité −9%.</div>
   </div>`:`<div class="card" style="display:flex;align-items:center;justify-content:center;min-height:180px"><div style="text-align:center;color:var(--dim);font-family:monospace;font-size:10px;letter-spacing:2px">ENTRER LES DONNÉES<br><span style="color:#0a2030">ET CLIQUER CALCULER</span></div></div>`}
   </div>`;
 }
 
 function renderAsync(){
   const items=[
-    {type:"DOUBLE DÉCLENCHEMENT",color:"#ff5252",
-     meca:"Effort inspiratoire > durée du cycle ventilateur. Le patient déclenche un 2e cycle immédiatement.",
-     courbe:"2 pics de pression successifs. Débit : 2 cycles rapprochés. Vt potentiellement doublé.",
-     risque:"Vt effectif doublé → barotraumatisme, sur-distension, VILI.",
-     solution:"↑ Ti ou ↑ seuil de cyclage (30%→10%) en VSAI. En VCV : ↑ Vt ou ↓ FR."},
-    {type:"NON-DÉCLENCHEMENT",color:"#ff6d9d",
-     meca:"Effort patient insuffisant pour dépasser le seuil trigger. Aggravé par l'auto-PEEP.",
-     courbe:"Dépression visible sur courbe de débit sans déclenchement de cycle ventilateur.",
-     risque:"Travail respiratoire ↑↑, fatigue diaphragmatique chronique.",
-     solution:"↓ seuil trigger. PEEP extrinsèque = 50-85% auto-PEEP mesurée."},
-    {type:"AUTO-PEEP / AIR TRAPPING",color:"#ffca28",
-     meca:"Expiration incomplète avant le cycle suivant. τ = RC élevée (BPCO, asthme).",
-     courbe:"Volume ne revient pas à 0. Débit expiratoire encore positif au début du cycle suivant.",
-     risque:"Hyperinflation dynamique → ↓ retour veineux → instabilité HD, pneumothorax.",
-     solution:"↑ Te : ↓ FR, ↓ ratio I:E, ↓ Vt. Bronchodilatateurs. Mesure : pause télé-expiratoire."},
-    {type:"ASYNCHRONIE DE CYCLAGE",color:"#ff9800",
-     meca:"Cycle ventilateur ne s'arrête pas quand le patient finit son effort inspiratoire.",
-     courbe:"VSAI : effort patient cesse avant fin du cycle → contre-effort en fin d'inspiration.",
-     risque:"Recrutement muscles expiratoires, lutte patient-ventilateur, inconfort majeur.",
-     solution:"↓ seuil de cyclage (30%→10-15%) en VSAI. ↓ Ti en VCV."},
+    {type:"DOUBLE DÉCLENCHEMENT",color:"#ff5252",meca:"Effort > durée du cycle. 2e cycle déclenché immédiatement.",courbe:"2 pics pression successifs. Vt potentiellement doublé.",risque:"Barotraumatisme, sur-distension, VILI.",solution:"↑ Ti ou ↑ seuil cyclage en VSAI."},
+    {type:"NON-DÉCLENCHEMENT",color:"#ff6d9d",meca:"Effort < seuil trigger. Auto-PEEP ++.",courbe:"Dépression visible sans cycle déclenché.",risque:"Fatigue diaphragmatique.",solution:"↓ seuil trigger. PEEP extrinsèque = 50-85% auto-PEEP."},
+    {type:"AUTO-PEEP / AIR TRAPPING",color:"#ffca28",meca:"Expiration incomplète. τ = RC élevée.",courbe:"Volume ne revient pas à 0. Débit expiratoire résiduel.",risque:"Hyperinflation → instabilité HD, pneumothorax.",solution:"↑ Te : ↓ FR, ↓ I:E, ↓ Vt. Bronchodilatateurs."},
+    {type:"ASYNCHRONIE DE CYCLAGE",color:"#ff9800",meca:"Cycle ne s'arrête pas quand effort cesse.",courbe:"Contre-effort visible en fin d'inspiration (VSAI).",risque:"Lutte patient-ventilateur.",solution:"↓ seuil cyclage (30%→10%) en VSAI."},
   ];
-  return`<div class="card" style="margin-bottom:14px">
-    <div class="ct">GUIDE DES ASYNCHRONIES PATIENT-VENTILATEUR</div>
-    <div style="font-size:10px;color:#507088;line-height:1.8">Les asynchronies concernent 25-50% des patients ventilés. Elles allongent la durée de VM et augmentent la mortalité (Thille 2006, ICM).</div>
-  </div>
+  return`<div class="card"><div class="ct">ASYNCHRONIES PATIENT-VENTILATEUR</div><div style="font-size:10px;color:#507088;line-height:1.8">25-50% des patients ventilés. Allongent VM et augmentent mortalité (Thille 2006).</div></div>
   ${items.map(a=>`<div class="acard" style="border-color:${a.color}25">
-    <div style="font-family:monospace;font-size:10px;letter-spacing:1.5px;font-weight:700;color:${a.color};margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:${a.color}"></span>${a.type}</div>
+    <div style="font-family:monospace;font-size:10px;font-weight:700;color:${a.color};margin-bottom:10px;display:flex;align-items:center;gap:6px"><span class="dot" style="background:${a.color}"></span>${a.type}</div>
     <div class="agrid">
       <div><div class="ablbl">MÉCANISME</div><div class="abval">${a.meca}</div></div>
-      <div><div class="ablbl">SUR LES COURBES</div><div class="abval">${a.courbe}</div></div>
+      <div><div class="ablbl">COURBES</div><div class="abval">${a.courbe}</div></div>
       <div><div class="ablbl" style="color:#ff525055">RISQUE</div><div class="abval" style="color:#806060">${a.risque}</div></div>
       <div><div class="ablbl" style="color:#00e67655">SOLUTION</div><div class="abval" style="color:#406a50">${a.solution}</div></div>
     </div>
@@ -486,423 +819,145 @@ function renderAsync(){
 }
 
 // ═══════════════════════════════════════════════════
-// CONTENU DES FICHES THÉORIQUES
+// FICHES THÉORIQUES
 // ═══════════════════════════════════════════════════
 const FICHES={
-
-physio:`<h2>01 — BASES DE PHYSIOLOGIE VENTILATOIRE</h2>
-
-<h3>Le système respiratoire comme circuit RC</h3>
-<p>Le poumon ventilé mécaniquement se modélise par un circuit résistance-compliance en série. Toute la ventilation mécanique découle de ces deux paramètres fondamentaux.</p>
-
-<div class="fbox">
-  <div class="f-title">ÉQUATION DU MOUVEMENT</div>
-  <div class="eq">P = (V / C) + (R × Flow) + PEEP</div>
-  <div class="comment">P = pression des voies aériennes (cmH₂O)</div>
-  <div class="comment">V = volume mobilisé (L) · C = compliance (L/cmH₂O)</div>
-  <div class="comment">R = résistance (cmH₂O/L/s) · Flow = débit instantané (L/s)</div>
-</div>
-
-<h3>La compliance (C)</h3>
-<p>La compliance pulmonaire exprime la <strong>déformabilité du système respiratoire</strong> : variation de volume pour une variation de pression donnée.</p>
-<div class="fbox">
-  <div class="eq2">C = ΔV / ΔP = Vt / (Pplat − PEEP)</div>
-  <div class="comment">Mesurée en pause télé-inspiratoire (débit = 0)</div>
-</div>
+physio:`<h2>01 — BASES PHYSIOLOGIE VENTILATOIRE</h2>
+<h3>Équation du mouvement</h3>
+<div class="fbox"><div class="f-title">ÉQUATION DU MOUVEMENT</div><div class="eq">P = (V / C) + (R × Flow) + PEEP</div><div class="comment">V = volume mobilisé · C = compliance · R = résistance · Flow = débit</div></div>
+<h3>Compliance (C)</h3>
+<p><strong>Déformabilité du système respiratoire.</strong> Mesurée en pause télé-inspiratoire (débit = 0).</p>
+<div class="fbox"><div class="eq2">C = ΔV / ΔP = Vt / (Pplat − PEEP)</div></div>
 <table class="kv">
   <tr><td>Normale</td><td><span class="vn">40–80 mL/cmH₂O</span></td></tr>
   <tr><td>SDRA sévère</td><td><span class="vp">&lt; 20 mL/cmH₂O</span></td></tr>
-  <tr><td>SDRA modéré</td><td><span class="vp">20–40 mL/cmH₂O</span></td></tr>
-  <tr><td>BPCO (emphysème)</td><td><span class="vn">60–100 mL/cmH₂O</span> (compliance ↑↑)</td></tr>
-  <tr><td>Fibrose pulmonaire</td><td><span class="vp">&lt; 30 mL/cmH₂O</span></td></tr>
+  <tr><td>BPCO emphysème</td><td><span class="vn">60–100 mL/cmH₂O</span></td></tr>
 </table>
-
-<h3>La résistance des voies aériennes (R)</h3>
-<p>La résistance traduit l'<strong>opposition au débit gazeux</strong> dans les voies aériennes. Elle est augmentée en cas de bronchospasme, sécrétions, sonde d'intubation fine.</p>
+<h3>Résistance (R) & Constante de temps (τ)</h3>
+<div class="fbox"><div class="eq3">τ = R × C</div><div class="comment">1τ = 63% expiré · 3τ = 95% · 5τ = 99%</div><div class="eq4">Te minimal = 3τ — Auto-PEEP si Te &lt; 3τ</div></div>
+<div class="warn-box"><div class="wb-title">⚠ PIÈGE BPCO</div>τ BPCO = 25 × 80/1000 = 2s. Pour FR=18, Te=2.2s &lt; 3τ=6s → auto-PEEP certaine. Solution : FR 10-12/min, I:E = 1:4.</div>
+<h3>Pressions clés</h3>
 <table class="kv">
-  <tr><td>Normale (intubé)</td><td><span class="vn">5–15 cmH₂O/L/s</span></td></tr>
-  <tr><td>BPCO sévère</td><td><span class="vp">20–50 cmH₂O/L/s</span></td></tr>
-  <tr><td>Asthme aigu grave</td><td><span class="vp">jusqu'à 100 cmH₂O/L/s</span></td></tr>
+  <tr><td>Pression crête</td><td>Résistive + élastique + PEEP</td></tr>
+  <tr><td>Pression plateau</td><td>Élastique + PEEP. <em>Cible &lt; 30 cmH₂O</em></td></tr>
+  <tr><td>Driving pressure</td><td>Pplat − PEEP. <em>Cible &lt; 15 cmH₂O</em></td></tr>
 </table>
+<div class="memo"><div class="memo-title">📌 À RETENIR</div>Ppeak − Pplat = résistif · Pplat − PEEP = élastique (driving)<br>Pplat ↑ + Ppeak ↑ → compliance ↓ (SDRA, pneumothorax)<br>Ppeak ↑ + Pplat stable → résistance ↑ (bronchospasme, sécrétions)</div>`,
 
-<h3>La constante de temps (τ)</h3>
-<p>La constante de temps τ définit la <strong>vitesse de vidange pulmonaire</strong>. En dessous de 3τ, l'expiration est incomplète → auto-PEEP.</p>
-<div class="fbox">
-  <div class="eq3">τ = R × C</div>
-  <div class="comment">À 1τ : 63% du volume expiré</div>
-  <div class="comment">À 3τ : 95% — expiration quasi-complète</div>
-  <div class="comment">À 5τ : 99% — expiration complète</div>
-  <div class="eq4">Te minimal requis = 3 × τ</div>
-</div>
-
-<div class="warn-box">
-  <div class="wb-title">⚠ PIÈGE BPCO</div>
-  τ BPCO = 25 × 80/1000 = <strong>2 secondes</strong>. Pour FR=18/min, Tt=3.3s, Te=2.2s. Comme Te &lt; 3τ=6s → auto-PEEP certaine !<br>
-  Solution : ↓ FR à 10-12/min, ratio I:E = 1:4 minimum.
-</div>
-
-<h3>Les pressions clés en ventilation</h3>
-<table class="kv">
-  <tr><td>Pression crête (Ppeak)</td><td>Max pendant l'insufflation. Composante résistive + élastique.</td></tr>
-  <tr><td>Pression plateau (Pplat)</td><td>Mesurée en pause télé-insp. (débit=0). Composante élastique seule. <em>Cible &lt; 30 cmH₂O</em></td></tr>
-  <tr><td>Driving pressure (DP)</td><td>DP = Pplat − PEEP. Reflet de la contrainte sur le parenchyme. <em>Cible &lt; 15 cmH₂O</em></td></tr>
-  <tr><td>PEEP totale</td><td>PEEP réglée + auto-PEEP. Mesurée par occlusion télé-expiratoire.</td></tr>
-</table>
-
-<div class="memo">
-  <div class="memo-title">📌 À RETENIR</div>
-  Ppeak − Pplat = composante <strong>résistive</strong> (R × Flow)<br>
-  Pplat − PEEP = driving pressure = composante <strong>élastique</strong><br>
-  Si Ppeak ↑ avec Pplat stable → problème résistif (bronchospasme, sécrétions)<br>
-  Si Pplat ↑ → problème compliance (SDRA, pneumothorax, épanchement)
-</div>`,
-
-// ────────────────────────────────────────────────
 modes:`<h2>02 — MODES VENTILATOIRES</h2>
-
-<h3>Classification générale</h3>
-<p>Les modes se distinguent par la <strong>variable contrôlée</strong> (volume ou pression), le <strong>déclencheur</strong> du cycle (ventilateur ou patient) et la <strong>cible</strong> de chaque insufflation.</p>
-
 <h3>VCV — Ventilation Contrôlée en Volume</h3>
-<p>Le ventilateur impose un <strong>volume courant fixe</strong>. La pression est la variable résultante, elle varie selon la mécanique pulmonaire du patient.</p>
-<table class="kv">
-  <tr><td>Variable contrôlée</td><td>Volume courant (Vt)</td></tr>
-  <tr><td>Variable résultante</td><td>Pression des VA (variable !)</td></tr>
-  <tr><td>Profil de débit</td><td>Carré (débit constant) ou décélérant</td></tr>
-  <tr><td>Avantage</td><td>Vt garanti, ventilation-minute stable</td></tr>
-  <tr><td>Inconvénient</td><td>Pression peut monter si compliance ↓ ou résistance ↑</td></tr>
-  <tr><td>Surveillance</td><td>Pplat, driving pressure à chaque réglage</td></tr>
-</table>
-
-<div class="ok-box">Courbe de débit <strong>carré</strong> → Pression : montée linéaire + plateau télé-insp. + décroissance exponentielle. La durée du plateau = pause de fin d'inspiration.</div>
-
-<h3>VCV-PC (Pressure Control) — Ventilation Contrôlée en Pression</h3>
-<p>Le ventilateur impose une <strong>pression d'insufflation fixe</strong>. Le volume est la variable résultante. Non simulé ici mais important en SDRA sévère.</p>
-<table class="kv">
-  <tr><td>Variable contrôlée</td><td>Pression d'insufflation</td></tr>
-  <tr><td>Variable résultante</td><td>Volume courant (variable !)</td></tr>
-  <tr><td>Profil de débit</td><td>Décélérant (débit max en début d'insp.)</td></tr>
-  <tr><td>Avantage</td><td>Pression limitée, meilleure tolérance</td></tr>
-  <tr><td>Inconvénient</td><td>Vt non garanti, surveiller si compliance change</td></tr>
-</table>
-
+<table class="kv"><tr><td>Variable contrôlée</td><td>Volume courant</td></tr><tr><td>Variable résultante</td><td>Pression (variable !)</td></tr><tr><td>Profil débit</td><td>Carré ou décélérant</td></tr><tr><td>Avantage</td><td>Vt garanti, VE stable</td></tr><tr><td>Surveillance</td><td>Pplat et driving à chaque réglage</td></tr></table>
 <h3>VACI — Ventilation Assistée Contrôlée Intermittente</h3>
-<p>Mode hybride : le ventilateur délivre un <strong>nombre garanti de cycles contrôlés</strong> tout en permettant des cycles spontanés intercalés. Chaque effort spontané est amplifié par une aide inspiratoire.</p>
-<table class="kv">
-  <tr><td>Cycles contrôlés</td><td>FR réglée, Vt garanti</td></tr>
-  <tr><td>Cycles spontanés</td><td>Déclenchés par le patient, amplifiés par PS</td></tr>
-  <tr><td>Intérêt</td><td>Maintien du drive, prévention atrophie diaphragmatique</td></tr>
-  <tr><td>Utilisation</td><td>Transition post-sédation, début de sevrage</td></tr>
-</table>
-
+<table class="kv"><tr><td>Cycles contrôlés</td><td>FR réglée, Vt garanti</td></tr><tr><td>Cycles spontanés</td><td>Déclenchés patient, amplifiés PS</td></tr><tr><td>Intérêt</td><td>Maintien drive, prévention atrophie</td></tr></table>
 <h3>VSAI/AI — Ventilation Spontanée avec Aide Inspiratoire</h3>
-<p>Mode entièrement <strong>déclenché par le patient</strong>. Chaque effort déclenche une insufflation que le ventilateur amplifie jusqu'à un niveau de pression prédéfini (= PEEP + PS). Le cyclage en expiration se fait quand le débit descend sous un seuil (25-30% du débit de pointe).</p>
-<table class="kv">
-  <tr><td>Déclenchement</td><td>Effort patient (trigger en débit ou pression)</td></tr>
-  <tr><td>Pression d'insufflation</td><td>PEEP + niveau d'aide (PS)</td></tr>
-  <tr><td>Profil de débit</td><td>Décélérant (max en début d'insp.)</td></tr>
-  <tr><td>Cyclage</td><td>Au % du débit de pointe (25-30% standard)</td></tr>
-  <tr><td>Vt</td><td>Non garanti, dépend de C, R et effort patient</td></tr>
-</table>
+<table class="kv"><tr><td>Déclenchement</td><td>Effort patient</td></tr><tr><td>Pression</td><td>PEEP + PS</td></tr><tr><td>Profil débit</td><td>Décélérant</td></tr><tr><td>Cyclage</td><td>25-30% débit de pointe</td></tr></table>
+<div class="memo"><div class="memo-title">📌 TRIGGER</div>Débit : −1 à −2 L/min · Pression : −0.5 à −1.5 cmH₂O<br>Régler le plus sensible sans auto-déclenchement.</div>`,
 
-<div class="memo">
-  <div class="memo-title">📌 RÈGLE DU TRIGGER</div>
-  Trigger en débit : −1 à −2 L/min par défaut.<br>
-  Trigger en pression : −0.5 à −1.5 cmH₂O.<br>
-  Trop sensible → auto-déclenchements. Trop insensible → non-déclenchements.<br>
-  <strong>Régler toujours le plus sensible sans auto-déclenchement.</strong>
-</div>
+reglages:`<h2>03 — RÉGLAGES INITIAUX & ARDSNet</h2>
+<h3>Réglages de base</h3>
+<table class="kv"><tr><td>Vt</td><td><em>8-10 mL/kg PI</em> poumon sain · 6 mL/kg SDRA</td></tr><tr><td>FR</td><td><em>14-18/min</em></td></tr><tr><td>PEEP</td><td><em>5 cmH₂O</em> par défaut</td></tr><tr><td>FiO₂</td><td><em>100%</em> à l'intubation → titrer</td></tr><tr><td>I:E</td><td><em>1:2</em> standard</td></tr></table>
+<div class="fbox"><div class="f-title">POIDS IDÉAL</div><div class="eq">♂ PI = 50 + 0.91 × (taille cm − 152.4)</div><div class="eq2">♀ PI = 45.5 + 0.91 × (taille cm − 152.4)</div></div>
+<h3>Protocole ARDSNet</h3>
+<div class="ok-box">Vt = <strong>6 mL/kg PI</strong> · Pplat ≤ <strong>30 cmH₂O</strong> · Driving P &lt; <strong>15 cmH₂O</strong><br>SpO₂ 88-95% · pH ≥ 7.30 · DV si PaO₂/FiO₂ &lt; 150 (≥ 16h/j)</div>`,
 
-<h3>CPAP — Continuous Positive Airway Pressure</h3>
-<p>Pression positive continue sans aide inspiratoire. Le patient fait tout le travail respiratoire. Utilisé pour les <strong>tests de ventilation spontanée</strong> (TVS) avant extubation.</p>`,
+sevrage:`<h2>04 — SEVRAGE DE LA VENTILATION</h2>
+<h3>Prérequis TVS</h3>
+<div class="ok-box">✓ Cause résolue · SpO₂ ≥ 92% FiO₂ ≤ 40% PEEP ≤ 8<br>✓ Hémodynamique stable · RASS 0 à −1 · Effort inspiratoire efficace</div>
+<h3>Critères prédictifs</h3>
+<div class="fbox"><div class="f-title">RSBI (Yang & Tobin, NEJM 1991)</div><div class="eq">RSBI = FR spontanée / Vt (L)</div><div class="eq2">RSBI &lt; 105 → sevrage probable</div><div class="eq3">RSBI &gt; 105 → échec probable</div></div>
+<div class="fbox"><div class="f-title">P0.1</div><div class="eq">Chute pression dans les 100 ms après occlusion</div><div class="eq2">Cible : 1-3 cmH₂O · &lt; 1 = drive insuffisant · &gt; 6 = surcharge</div></div>
+<h3>Protocole VSAI</h3>
+<table class="kv"><tr><td>Post-sédation</td><td>PS 16-20 · PEEP 8-10</td></tr><tr><td>Sevrage</td><td>PS 12→10→8 · PEEP 5-8</td></tr><tr><td>Pré-extubation</td><td>PS 5-7 · PEEP 5 · TVS 30-120 min</td></tr></table>`,
 
-// ────────────────────────────────────────────────
-reglages:`<h2>03 — RÉGLAGES INITIAUX & STRATÉGIE ARDSNet</h2>
+alarmes:`<h2>05 — ALARMES & DÉPANNAGE</h2>
+<div class="warn-box"><div class="wb-title">⚠ RÉFLEXE ALARME + DÉSATURATION</div>1. Déconnecter → BAVU O₂ 100%<br>2. Ausculter · Inspecter thorax<br>3. Aspiration trachéale<br>4. Diagnostiquer (DOPE)<br>5. Reconnecter si résolu</div>
+<h3>Méthode DOPE</h3>
+<table class="kv"><tr><td><strong>D</strong>éplacement</td><td>Sonde déplacée (bronche D ++) ou extubée</td></tr><tr><td><strong>O</strong>bstruction</td><td>Bouchon muqueux, morsure, plicature</td></tr><tr><td><strong>P</strong>neumothorax</td><td>Trauma, haute PEEP, emphysème bulleux</td></tr><tr><td><strong>E</strong>quipment</td><td>Panne ventilateur, déconnexion, filtre obstrué</td></tr></table>
+<h3>Haute pression</h3>
+<table class="kv"><tr><td>Ppeak ↑, Pplat stable</td><td>Résistif → bronchospasme, sécrétions</td></tr><tr><td>Ppeak ↑, Pplat ↑</td><td>Compliance ↓ → pneumothorax, SDRA, épanchement</td></tr></table>
+<div class="memo"><div class="memo-title">📌 BALLONNET</div>Cible : <strong>25-30 cmH₂O</strong> · Contrôler toutes les 8h<br>&lt; 25 → microaspirations → VAP · &gt; 30 → ischémie trachéale</div>`,
 
-<h3>Réglages de base à l'intubation</h3>
-<table class="kv">
-  <tr><td>Volume courant (Vt)</td><td><em>8–10 mL/kg PI</em> pour poumon sain · 6 mL/kg PI pour SDRA</td></tr>
-  <tr><td>Fréquence respiratoire</td><td><em>14–18 /min</em> pour adulte standard</td></tr>
-  <tr><td>PEEP initiale</td><td><em>5 cmH₂O</em> par défaut · adapter selon pathologie</td></tr>
-  <tr><td>FiO₂ initiale</td><td><em>100%</em> à l'intubation → titrer rapidement à SpO₂ 94-98%</td></tr>
-  <tr><td>Ratio I:E</td><td><em>1:2</em> standard (33% inspiration, 67% expiration)</td></tr>
-  <tr><td>Mode initial</td><td>VCV le plus souvent (Vt garanti)</td></tr>
-</table>
-
-<h3>Calcul du Poids Idéal (PI)</h3>
-<div class="fbox">
-  <div class="eq">♂ PI = 50 + 0.91 × (taille cm − 152.4)</div>
-  <div class="eq2">♀ PI = 45.5 + 0.91 × (taille cm − 152.4)</div>
-  <div class="comment">Toujours baser le Vt sur le PI, jamais le poids réel</div>
-  <div class="comment">Un obèse à 120 kg peut avoir un PI de 70 kg → Vt = 420 mL en SDRA</div>
-</div>
-
-<h3>Protocole ARDSNet (NEJM 2000)</h3>
-<p>L'étude ARDSNet a démontré une réduction de mortalité de 9% absolus en limitant Vt à 6 mL/kg PI vs 12 mL/kg. C'est la référence mondiale pour la ventilation protectrice.</p>
-
-<div class="ok-box">
-  <strong>Objectifs stricts :</strong><br>
-  → Vt : <strong>6 mL/kg PI</strong> (tolérer jusqu'à 8 si Pplat &lt; 28)<br>
-  → Pplat : <strong>≤ 30 cmH₂O</strong><br>
-  → Driving pressure : <strong>&lt; 15 cmH₂O</strong> (Amato 2015)<br>
-  → SpO₂ : <strong>88-95%</strong> (hypoxémie permissive)<br>
-  → pH : <strong>≥ 7.30</strong> (hypercapnie permissive acceptée)
-</div>
-
-<h3>Tables PEEP/FiO₂ ARDSNet</h3>
-<table class="kv">
-  <tr><td>FiO₂ 30-40%</td><td>PEEP 5-8 cmH₂O</td></tr>
-  <tr><td>FiO₂ 40-50%</td><td>PEEP 8-10 cmH₂O</td></tr>
-  <tr><td>FiO₂ 50-70%</td><td>PEEP 10-14 cmH₂O (table haute-PEEP)</td></tr>
-  <tr><td>FiO₂ 70-80%</td><td>PEEP 14-18 cmH₂O</td></tr>
-  <tr><td>FiO₂ 80-100%</td><td>PEEP 18-24 cmH₂O</td></tr>
-</table>
-
-<h3>Ventilation en BPCO</h3>
-<div class="warn-box">
-  <div class="wb-title">⚠ SPÉCIFICITÉS BPCO</div>
-  Objectif SpO₂ : <strong>88-92%</strong> (éviter la dépression du drive hypoxique à long terme)<br>
-  FR : <strong>10-14/min</strong> maximum pour limiter l'auto-PEEP<br>
-  Ratio I:E : <strong>1:3 à 1:4</strong> (Te long pour permettre l'expiration complète)<br>
-  PEEP extrinsèque : <strong>50-80% de l'auto-PEEP mesurée</strong> pour faciliter le déclenchement<br>
-  Bronchodilatateurs en nébulisation sur circuit ventilateur
-</div>
-
-<h3>Vérifications systématiques après réglage</h3>
-<p>1. Vérifier Pplat (pause télé-inspiratoire 0.5s) → &lt; 30 cmH₂O<br>
-2. Calculer driving pressure (Pplat − PEEP) → &lt; 15 cmH₂O<br>
-3. Vérifier Te ≥ 3τ (auto-PEEP)<br>
-4. Contrôler gazométrie à H1 puis H4<br>
-5. Surveiller adaptation au ventilateur</p>`,
-
-// ────────────────────────────────────────────────
-sevrage:`<h2>04 — SEVRAGE DE LA VENTILATION MÉCANIQUE</h2>
-
-<h3>Définitions</h3>
-<table class="kv">
-  <tr><td>Sevrage simple</td><td>Réussite du 1er TVS, extubation sans difficulté (50% des patients)</td></tr>
-  <tr><td>Sevrage difficile</td><td>Échec du 1er TVS, succès au plus tard au 3e TVS à J7</td></tr>
-  <tr><td>Sevrage prolongé</td><td>Plus de 3 TVS échoués ou &gt; 7 jours après le 1er TVS</td></tr>
-</table>
-
-<h3>Prérequis au Test de Ventilation Spontanée (TVS)</h3>
-<div class="ok-box">
-  ✓ Cause de l'intubation résolue ou en voie de résolution<br>
-  ✓ SpO₂ ≥ 92% avec FiO₂ ≤ 40% et PEEP ≤ 8 cmH₂O<br>
-  ✓ Hémodynamique stable (pas ou peu de vasopresseurs)<br>
-  ✓ Patient éveillé, coopérant (RASS 0 à −1)<br>
-  ✓ Effort inspiratoire efficace<br>
-  ✓ Pas de fièvre &gt; 38.5°C, pas d'acidose sévère
-</div>
-
-<h3>Critères prédictifs de sevrage</h3>
-
-<div class="fbox">
-  <div class="f-title">RSBI — RAPID SHALLOW BREATHING INDEX</div>
-  <div class="eq">RSBI = Fréquence Respiratoire (spont.) / Vt (L)</div>
-  <div class="comment">Mesuré sur 1 min en VS sans aide</div>
-  <div class="eq2">RSBI &lt; 105 /min/L → sevrage probable (Se 97%, Sp 64%)</div>
-  <div class="eq3">RSBI &gt; 105 /min/L → échec probable</div>
-  <div class="comment">Yang & Tobin, NEJM 1991</div>
-</div>
-
-<div class="fbox">
-  <div class="f-title">P0.1 — PRESSION D'OCCLUSION À 0.1 SECONDE</div>
-  <div class="eq">P0.1 = chute de pression dans les 100 ms suivant l'occlusion des VA</div>
-  <div class="comment">Reflet du drive respiratoire central (effort neuromuscul.)</div>
-  <div class="eq2">P0.1 : 1–3 cmH₂O → sevrage favorable</div>
-  <div class="eq3">P0.1 &lt; 1 cmH₂O → drive insuffisant (dépression SNC, curarisation)</div>
-  <div class="eq3">P0.1 &gt; 6 cmH₂O → effort excessif (charge ↑ ou réserve ↓)</div>
-</div>
-
-<div class="fbox">
-  <div class="f-title">PImax — PRESSION INSPIRATOIRE MAXIMALE</div>
-  <div class="eq">PImax (ou MIP) mesurée sur occlusion prolongée 20 secondes</div>
-  <div class="eq2">PImax &gt; −30 cmH₂O → réserve musculaire suffisante</div>
-</div>
-
-<h3>Conduite du TVS</h3>
-<p><strong>Méthodes équivalentes :</strong> pièce en T (30 min) ou CPAP/VS-AI faible (PS 5-7 cmH₂O + PEEP 5 cmH₂O, 30-120 min)</p>
-
-<div class="warn-box">
-  <div class="wb-title">CRITÈRES D'ÉCHEC DU TVS</div>
-  FR &gt; 35/min ou &lt; 8/min · SpO₂ &lt; 90% · PaO₂ &lt; 60 mmHg · pH &lt; 7.32<br>
-  PA systolique &gt; 180 ou &lt; 90 mmHg · Agitation, sueurs, troubles conscience<br>
-  Tirage intercostal, paradoxe abdomino-thoracique
-</div>
-
-<h3>Stratégie de sevrage en VSAI</h3>
-<table class="kv">
-  <tr><td>Phase 1 (post-sédation)</td><td>PS 16-20 cmH₂O · PEEP 8-10</td></tr>
-  <tr><td>Phase 2 (sevrage)</td><td>PS 12 → 10 → 8 cmH₂O · PEEP 5-8</td></tr>
-  <tr><td>Phase 3 (pré-extubation)</td><td>PS 5-7 cmH₂O · PEEP 5 · TVS si bien toléré</td></tr>
-  <tr><td>Critères extubation</td><td>TVS réussi + toux efficace + sécrétions gérables</td></tr>
-</table>
-
-<div class="memo">
-  <div class="memo-title">📌 MNÉMOTECHNIQUE SEVRAGE</div>
-  <strong>STOP-BANG ventilatoire :</strong><br>
-  S — SpO₂ ≥ 92% sous FiO₂ ≤ 40%<br>
-  T — Tousseur efficace<br>
-  O — Origine de l'intubation résolue<br>
-  P — PEEP ≤ 8, Pression-support ≤ 8<br>
-  → Si 4/4 : tenter le TVS
-</div>`,
-
-// ────────────────────────────────────────────────
-alarmes:`<h2>05 — ALARMES VENTILATOIRES & DÉPANNAGE</h2>
-
-<h3>Principe général</h3>
-<p>Face à une alarme ventilateur, la règle est d'abord de <strong>ventiler manuellement au masque</strong> si le patient est en détresse, puis de diagnostiquer méthodiquement. Ne jamais silencer une alarme sans en comprendre l'origine.</p>
-
-<div class="warn-box">
-  <div class="wb-title">⚠ RÉFLEXE EN CAS D'ALARME AVEC DÉSATURATION</div>
-  1. Déconnecter du ventilateur<br>
-  2. Ventiler au BAVU (100% O₂)<br>
-  3. Ausculter + vérifier visibilité du thorax<br>
-  4. Aspirations trachéales<br>
-  5. Diagnostiquer et corriger<br>
-  6. Reconnecter une fois le problème résolu
-</div>
-
-<h3>Alarme Haute Pression</h3>
-<table class="kv">
-  <tr><td>Déclenchement</td><td>Ppeak &gt; limite réglée (ex : 40 cmH₂O)</td></tr>
-  <tr><td>Causes fréquentes</td><td>Bronchospasme · Sécrétions · Morsure sonde · Toux · Patient en lutte</td></tr>
-  <tr><td>Ppeak ↑, Pplat stable</td><td>→ Problème <strong>résistif</strong> (bronchospasme, sécrétions)</td></tr>
-  <tr><td>Ppeak ↑, Pplat ↑</td><td>→ Problème <strong>compliance</strong> (atélectasie, pneumothorax, épanchement, SDRA)</td></tr>
-  <tr><td>Conduite</td><td>Aspiration · Bronchodilatateurs · Vérifier le circuit · Sedation si lutte</td></tr>
-</table>
-
-<h3>Alarme Basse Pression / Fuite</h3>
-<table class="kv">
-  <tr><td>Causes</td><td>Déconnexion · Ballonnet dégonflé · Circuit fendu · Extubation accidentelle</td></tr>
-  <tr><td>Conduite</td><td>Vérifier toutes les connexions · Contrôler pression ballonnet (25-30 cmH₂O) · Ausculter</td></tr>
-</table>
-
-<h3>Alarme Apnée</h3>
-<table class="kv">
-  <tr><td>Définition</td><td>Absence d'effort respiratoire pendant &gt; délai réglé (10-20s)</td></tr>
-  <tr><td>Causes</td><td>Sédation trop profonde · Curarisation · Lésion neurologique centrale</td></tr>
-  <tr><td>Conduite</td><td>Passer en mode contrôlé · Évaluer niveau de sédation · Stimuler le patient</td></tr>
-</table>
-
-<h3>Alarme Volume Expiré Bas</h3>
-<table class="kv">
-  <tr><td>Causes</td><td>Fuite sur circuit · Ballonnet · Volume courant insuffisant</td></tr>
-  <tr><td>Attention</td><td>En VSAI : Vt spontané trop faible → augmenter PS ou passer en mode contrôlé</td></tr>
-</table>
-
-<h3>Diagnostic différentiel : le patient désature sous VM</h3>
-<p>Méthode DOPE :</p>
-<table class="kv">
-  <tr><td><strong>D</strong>éplacement</td><td>Sonde déplacée (intra-bronchique droit ++) ou extubée</td></tr>
-  <tr><td><strong>O</strong>bstruction</td><td>Bouchon muqueux, morsure, plicature du circuit</td></tr>
-  <tr><td><strong>P</strong>neumothorax</td><td>Surtout si trauma, haute PEEP, emphysème bulleux</td></tr>
-  <tr><td><strong>E</strong>quipment</td><td>Panne ventilateur, déconnexion, fuite O₂, filtre obstrué</td></tr>
-</table>
-
-<div class="memo">
-  <div class="memo-title">📌 PRESSION BALLONNET</div>
-  Cible : <strong>25–30 cmH₂O</strong><br>
-  Inférieure : risque de microaspiration et pneumonie<br>
-  Supérieure : ischémie muqueuse trachéale → sténose secondaire<br>
-  Contrôler toutes les 8h (manomètre dédié)
-</div>`,
-
-// ────────────────────────────────────────────────
 patho:`<h2>06 — SPÉCIFICITÉS PAR PATHOLOGIE</h2>
-
-<h3>SDRA — Syndrome de Détresse Respiratoire Aiguë</h3>
-
-<p><strong>Critères de Berlin (2012) :</strong></p>
-<table class="kv">
-  <tr><td>Délai</td><td>Début aigu (&lt; 1 semaine) après agression clinique</td></tr>
-  <tr><td>Imagerie</td><td>Opacités bilatérales non expliquées par épanchement/atélectasie/nodules</td></tr>
-  <tr><td>Origine</td><td>Non expliqué par insuffisance cardiaque (PAPO &lt; 18 ou BNP)</td></tr>
-  <tr><td>SDRA léger</td><td>PaO₂/FiO₂ = <span class="vp">200–300</span> sous PEEP ≥ 5</td></tr>
-  <tr><td>SDRA modéré</td><td>PaO₂/FiO₂ = <span class="vp">100–200</span> sous PEEP ≥ 5</td></tr>
-  <tr><td>SDRA sévère</td><td>PaO₂/FiO₂ = <span class="vp">&lt; 100</span> sous PEEP ≥ 5</td></tr>
-</table>
-
-<div class="ok-box">
-  <strong>Ventilation protectrice SDRA :</strong><br>
-  → Vt = <strong>6 mL/kg PI</strong> (tolérer 4-8 selon Pplat)<br>
-  → Pplat ≤ <strong>30 cmH₂O</strong> · Driving P &lt; <strong>15 cmH₂O</strong><br>
-  → PEEP optimisée (table ARDSNet ou manœuvre de recrutement)<br>
-  → Hypercapnie permissive si pH &gt; 7.25<br>
-  → Décubitus ventral si PaO₂/FiO₂ &lt; 150 pendant ≥ 16h/j (Guérin 2013, NEJM)<br>
-  → Curares 48h si PaO₂/FiO₂ &lt; 150 (ACURASYS 2010)<br>
-  → NO inhalé si HTAP associée
-</div>
-
-<h3>BPCO décompensé</h3>
-<div class="warn-box">
-  <div class="wb-title">DANGERS SPÉCIFIQUES</div>
-  Auto-PEEP → hyperinflation dynamique → ↓ débit cardiaque, arrêt circulatoire<br>
-  Alcalose métabolique de compensation → shift droite courbe dissociation O₂<br>
-  Dépendance au CO₂ comme stimulus ventilatoire (à long terme)
-</div>
-<table class="kv">
-  <tr><td>Vt</td><td>7-8 mL/kg PI (pas trop bas : espace mort élevé)</td></tr>
-  <tr><td>FR</td><td><em>10-14/min maximum</em></td></tr>
-  <tr><td>I:E</td><td><em>1:3 à 1:4</em> (Te long ++)</td></tr>
-  <tr><td>PEEP</td><td>4-5 cmH₂O (50-80% auto-PEEP mesurée)</td></tr>
-  <tr><td>SpO₂ cible</td><td><em>88-92%</em></td></tr>
-  <tr><td>Attention</td><td>PaCO₂ cible = PaCO₂ de base du patient, pas 40 mmHg !</td></tr>
-</table>
-
+<h3>SDRA — Critères Berlin 2012</h3>
+<table class="kv"><tr><td>Léger</td><td>PaO₂/FiO₂ <span class="vp">200-300</span></td></tr><tr><td>Modéré</td><td>PaO₂/FiO₂ <span class="vp">100-200</span></td></tr><tr><td>Sévère</td><td>PaO₂/FiO₂ <span class="vp">&lt; 100</span></td></tr></table>
+<div class="ok-box">Vt 6 mL/kg · Pplat ≤ 30 · Driving &lt; 15 · DV si PaO₂/FiO₂ &lt; 150 · Curares 48h si &lt; 150 · Corticoïdes (dexaméthasone)</div>
+<h3>BPCO</h3>
+<div class="warn-box"><div class="wb-title">SPÉCIFICITÉS BPCO</div>FR 10-14/min · I:E 1:3 à 1:4 · SpO₂ cible 88-92%<br>PEEP extrinsèque 50-80% auto-PEEP mesurée · PaCO₂ cible = PaCO₂ de base</div>
 <h3>Asthme aigu grave</h3>
-<table class="kv">
-  <tr><td>Résistance</td><td>Très élevée (50-100 cmH₂O/L/s)</td></tr>
-  <tr><td>Stratégie</td><td>"Permissive hypoventilation" : FR 8-12/min · Vt 6-8 mL/kg</td></tr>
-  <tr><td>PEEP</td><td>0-5 cmH₂O au début (auto-PEEP élevée)</td></tr>
-  <tr><td>FiO₂</td><td>100% initialement</td></tr>
-  <tr><td>Traitement</td><td>Bronchodilatateurs en nébulisation (Salbutamol 5mg/h) · Corticoïdes IV · MgSO₄</td></tr>
-</table>
+<table class="kv"><tr><td>Stratégie</td><td>Permissive hypoventilation · FR 8-12/min</td></tr><tr><td>PEEP</td><td>0-5 cmH₂O initialement</td></tr><tr><td>Déconnexion</td><td>Si collapsus post-intubation → déconnecter 30s</td></tr></table>
+<h3>TC grave</h3>
+<table class="kv"><tr><td>PaCO₂</td><td><em>35-40 mmHg</em> · Éviter hyperventilation</td></tr><tr><td>SpO₂</td><td><em>≥ 95%</em> · Pas d'hypoxémie permissive</td></tr><tr><td>PEEP</td><td>5 cmH₂O · PEEP ↑ → PIC ↑</td></tr></table>`,
 
-<div class="warn-box">
-  <div class="wb-title">⚠ ASTHME : PAUSE TÉLÉ-EXPIRATOIRE SYSTÉMATIQUE</div>
-  À l'intubation d'un asthmatique : mesurer l'auto-PEEP dès le premier cycle.<br>
-  En cas d'arrêt circulatoire post-intubation → déconnecter 30 secondes du ventilateur<br>
-  (lever l'hyperinflation dynamique) avant d'écarter un pneumothorax.
+prehosp:`<h2>07 — VENTILATION PRÉHOSPITALIÈRE SAMU</h2>
+<h3>Spécificités du contexte SAMU</h3>
+<p>La ventilation en préhospitalier impose des contraintes majeures : <strong>durée de transport limitée, accès difficile au patient, matériel contraint</strong> (bouteilles O₂ limitées, respirateurs de transport). L'objectif est la stabilisation, pas l'optimisation fine.</p>
+<h3>Respirateurs de transport</h3>
+<table class="kv">
+  <tr><td>Oxylog 3000+</td><td>VCV, VACI, CPAP — le plus répandu SAMU France</td></tr>
+  <tr><td>Monnal T60</td><td>VCV, VACI, VSAI — plus complet, utilisé en réa mobile</td></tr>
+  <tr><td>Mode préférentiel</td><td><strong>VCV</strong> en préhospitalier (Vt garanti quelle que soit la position)</td></tr>
+</table>
+<h3>Réglages initiaux post-intubation SAMU</h3>
+<div class="ok-box">
+  Vt : <strong>6-8 mL/kg PI</strong> · FR : <strong>14-16/min</strong><br>
+  PEEP : <strong>5 cmH₂O</strong> · FiO₂ : <strong>100%</strong> puis titrer<br>
+  EtCO₂ cible : <strong>35-40 mmHg</strong> · I:E : <strong>1:2</strong>
 </div>
-
-<h3>Pneumopathie infectieuse sévère</h3>
+<h3>Consommation O₂ — calcul pratique</h3>
+<div class="fbox">
+  <div class="f-title">AUTONOMIE BOUTEILLE</div>
+  <div class="eq">Durée (min) = (Pression bar × Volume L) / (FiO₂ × FR × Vt L × 1.2)</div>
+  <div class="comment">Bouteille 6L à 200 bar · FiO₂ 50% · FR 15 · Vt 0.5L</div>
+  <div class="eq2">→ (200 × 6) / (0.5 × 15 × 0.5 × 1.2) = 267 min ≈ 4h30</div>
+  <div class="comment">Toujours prévoir +50% de marge · Emporter double si transport long</div>
+</div>
+<h3>Arrêt cardiaque sous ventilation mécanique</h3>
 <table class="kv">
-  <tr><td>Sans critères SDRA</td><td>Vt 8 mL/kg PI · PEEP 5 · FiO₂ titrée SpO₂ 94-98%</td></tr>
-  <tr><td>Avec critères SDRA</td><td>Stratégie SDRA (voir ci-dessus)</td></tr>
-  <tr><td>Prévention VAP</td><td>Tête de lit 30° · hygiène mains · aspiration sus-glottique · sevrage quotidien</td></tr>
+  <tr><td>Fréquence</td><td><strong>10/min</strong> pendant MCE (éviter hyperventilation)</td></tr>
+  <tr><td>Volume</td><td>Vt visible uniquement, pas de plateau thoracique</td></tr>
+  <tr><td>PEEP</td><td>0 cmH₂O pendant l'ACR</td></tr>
+  <tr><td>FiO₂</td><td>100%</td></tr>
+  <tr><td>EtCO₂ MCE</td><td>&gt; 10 mmHg = qualité acceptable · Montée brutale = RACS</td></tr>
 </table>
-
-<h3>Traumatisé crânien grave</h3>
+<div class="warn-box">
+  <div class="wb-title">⚠ VENTILATION TRAUMATISÉ CRÂNIEN GRAVE (SMUR)</div>
+  SpO₂ ≥ 95% (O₂ prioritaire) · EtCO₂ 35-40 mmHg (éviter hypo ET hypercapnie)<br>
+  PAS ≥ 90 mmHg (noradrénaline si nécessaire)<br>
+  Hyperventilation (EtCO₂ 30-35) uniquement si engagement transtentoriel actif
+</div>
+<h3>Intubation en conditions dégradées</h3>
+<div class="amber-box">
+  En préhospitalier, l'ISR doit être préparée <strong>avant</strong> toute tentative :<br>
+  → Aspiration + BAVU + O₂ nasal haut débit à portée<br>
+  → Kit coniotomie ouvert sur brancard<br>
+  → Masque laryngé en sauvetage (i-gel ou LMA)<br>
+  → Maximum <strong>2 tentatives laryngoscopie directe</strong> avant vidéolaryngoscope
+</div>
+<h3>Post-RACS en préhospitalier</h3>
 <table class="kv">
-  <tr><td>PaCO₂ cible</td><td><em>35-40 mmHg</em> (éviter hyperventilation sauf HTIC aiguë)</td></tr>
-  <tr><td>SpO₂ cible</td><td><em>≥ 95%</em> (pas d'hypoxémie permissive)</td></tr>
-  <tr><td>PEEP</td><td>5 cmH₂O (PEEP ↑ → ↑ PIC via ↑ PVC)</td></tr>
-  <tr><td>Décubitus</td><td>Tête à 30°, axe neutre</td></tr>
+  <tr><td>FiO₂</td><td>Titrer SpO₂ 94-98% — éviter hyperoxie (radicaux libres)</td></tr>
+  <tr><td>EtCO₂</td><td>35-40 mmHg — normoventilation</td></tr>
+  <tr><td>PEEP</td><td>5 cmH₂O · Ne pas augmenter si instable HD</td></tr>
+  <tr><td>Température</td><td>Éviter fièvre &gt; 37.8°C (TTM 36°C dès que possible)</td></tr>
+  <tr><td>PA cible</td><td>PAS ≥ 90 mmHg · Noradrénaline si choc post-RACS</td></tr>
 </table>`
 };
 
-// ═══════════════════════════════════════════════════
-// RENDU FICHES
-// ═══════════════════════════════════════════════════
 const FICHE_LIST=[
-  {id:"physio",   label:"01 · Physio"},
-  {id:"modes",    label:"02 · Modes"},
-  {id:"reglages", label:"03 · Réglages"},
-  {id:"sevrage",  label:"04 · Sevrage"},
-  {id:"alarmes",  label:"05 · Alarmes"},
-  {id:"patho",    label:"06 · Patho"},
+  {id:"physio",label:"01 · Physio"},
+  {id:"modes",label:"02 · Modes"},
+  {id:"reglages",label:"03 · Réglages"},
+  {id:"sevrage",label:"04 · Sevrage"},
+  {id:"alarmes",label:"05 · Alarmes"},
+  {id:"patho",label:"06 · Patho"},
+  {id:"prehosp",label:"07 · SAMU 🚑"},
 ];
 
 function renderFiches(){
   const nav=FICHE_LIST.map(f=>
     `<button class="fnav-btn${S.fiche===f.id?" active":""}" onclick="S.fiche='${f.id}';refresh()">${f.label}</button>`
   ).join("");
-  return`
-  <div class="fiche-nav">${nav}</div>
-  <div class="card fiche active">${FICHES[S.fiche]||"Contenu à venir."}</div>`;
+  return`<div class="fiche-nav">${nav}</div><div class="card fiche">${FICHES[S.fiche]||"Contenu à venir."}</div>`;
 }
 
 // ═══════════════════════════════════════════════════
@@ -910,19 +965,20 @@ function renderFiches(){
 // ═══════════════════════════════════════════════════
 function refresh(){
   const sc=SC[S.scen],m=MD[S.mode];
-  // Header badges
   document.getElementById("hdr-badges").innerHTML=
     `<span class="badge ${sc.bcls}">${sc.label}</span><span class="badge b-cyan">${m.label}</span>`;
-  // Toolbar : masquer pour fiches
-  document.getElementById("toolbar-wrap").style.display=S.tab==="fiches"?"none":"block";
-  // Contenu
+  const showToolbar=!["fiches","isr","capno","pharmaco"].includes(S.tab);
+  document.getElementById("toolbar-wrap").style.display=showToolbar?"block":"none";
   const el=document.getElementById("main-content");
   if(S.tab==="courbes")     el.innerHTML=renderCourbes();
+  else if(S.tab==="capno")  el.innerHTML=renderCapno();
+  else if(S.tab==="isr")    el.innerHTML=renderISR();
   else if(S.tab==="params") el.innerHTML=renderParams();
   else if(S.tab==="calcul") el.innerHTML=renderCalc();
   else if(S.tab==="async")  el.innerHTML=renderAsync();
   else if(S.tab==="fiches") el.innerHTML=renderFiches();
-  // Courbes canvas
+  else if(S.tab==="pharmaco") el.innerHTML=renderPharmaco();
+
   if(S.tab==="courbes"){
     requestAnimationFrame(()=>{
       const d=genCurves();
@@ -930,6 +986,9 @@ function refresh(){
       drawWave("cv-q",d.Q,"#00e676");
       drawWave("cv-v",d.V,"#ff6d9d");
     });
+  }
+  if(S.tab==="capno"){
+    requestAnimationFrame(()=>drawCapno("cv-capno",S.capno_profile));
   }
 }
 
@@ -958,49 +1017,757 @@ document.getElementById("scen-btns").addEventListener("click",e=>{
   refresh();
 });
 window.addEventListener("resize",()=>{
-  if(S.tab==="courbes")requestAnimationFrame(()=>{
-    const d=genCurves();
-    drawWave("cv-p",d.P,"#00e5ff");
-    drawWave("cv-q",d.Q,"#00e676");
-    drawWave("cv-v",d.V,"#ff6d9d");
-  });
+  if(S.tab==="courbes")requestAnimationFrame(()=>{const d=genCurves();drawWave("cv-p",d.P,"#00e5ff");drawWave("cv-q",d.Q,"#00e676");drawWave("cv-v",d.V,"#ff6d9d");});
+  if(S.tab==="capno")requestAnimationFrame(()=>drawCapno("cv-capno",S.capno_profile));
 });
 
 // ═══════════════════════════════════════════════════
-// INIT + SERVICE WORKER OFFLINE
+// INIT + SERVICE WORKER
 // ═══════════════════════════════════════════════════
 refresh();
-
-function toast(msg,dur=3500){
-  const t=document.getElementById("pwa-toast");
-  t.textContent=msg;t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),dur);
-}
-
+function toast(msg,dur=3500){const t=document.getElementById("pwa-toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),dur);}
 if("serviceWorker" in navigator){
-  const swCode=`
-const CACHE="ventilsim-v2";
-self.addEventListener("install",e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll([location.pathname])).catch(()=>{}));
-  self.skipWaiting();
-});
-self.addEventListener("activate",e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener("fetch",e=>{
-  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-    const c=res.clone();
-    caches.open(CACHE).then(cache=>cache.put(e.request,c));
-    return res;
-  }).catch(()=>caches.match(e.request))));
-});
-`;
+  const swCode=`const CACHE="ventilsim-v3";
+self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll([location.pathname])).catch(()=>{}));self.skipWaiting();});
+self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
+self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{const c=res.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c));return res;}).catch(()=>caches.match(e.request))));});`;
   const blob=new Blob([swCode],{type:"application/javascript"});
   navigator.serviceWorker.register(URL.createObjectURL(blob),{scope:"/"})
-    .then(()=>{setTimeout(()=>toast("✓ Disponible hors ligne"),1500);})
-    .catch(()=>{});
+    .then(()=>{setTimeout(()=>toast("✓ Disponible hors ligne"),1500);}).catch(()=>{});
 }
+
+// ═══════════════════════════════════════════════════
+// PHARMACO DATA
+// ═══════════════════════════════════════════════════
+const PHARMACO = {
+
+  // ══════════════════════════════════════════════════
+  // HYPNOTIQUES — INDUCTION
+  // ══════════════════════════════════════════════════
+  hypnotiques: {
+    label: "Hypnotiques — Induction",
+    color: "#00e5ff",
+    icon: "💉",
+    drugs: [
+      {
+        name: "Étomidate",
+        dci: "Étomidate",
+        specialite: "Hypnomidate®",
+        classe: "Imidazolé",
+        presentation: "20 mg/10 mL (2 mg/mL)",
+        indication: "ISR standard, patient neurologique, hémodynamiquement instable",
+        dose_induction: "0.3 mg/kg IV",
+        dose_max: "20 mg",
+        delai: "30-60 secondes",
+        duree: "5-10 minutes",
+        avantages: [
+          "Stabilité hémodynamique exceptionnelle",
+          "Pas d'histaminolibération",
+          "Neuroprotection relative",
+          "Maintien réflexes laryngés modéré"
+        ],
+        inconvenients: [
+          "Inhibition corticosurrénalienne (dose unique acceptable en ISR)",
+          "Myoclonies fréquentes (30-40%)",
+          "Pas d'analgésie",
+          "Nausées/vomissements"
+        ],
+        ci: [
+          "Insuffisance corticosurrénalienne connue",
+          "Sepsis (en perfusion continue — dose unique ISR acceptable)"
+        ],
+        precautions: "En ISR dose unique : inhibition cortico transitoire acceptable. En perfusion continue : augmente mortalité en sepsis (études CORTICUS/ACCCESS).",
+        grossesse: "Passage placentaire — éviter sauf urgence vitale",
+        couleur_fiole: "#e8f0e8"
+      },
+      {
+        name: "Kétamine",
+        dci: "Kétamine",
+        specialite: "Kétalar®",
+        classe: "Antagoniste NMDA",
+        presentation: "500 mg/10 mL (50 mg/mL) — aussi 250 mg/5 mL",
+        indication: "Choc, bronchospasme, asthme, patient instable, analgésie-sédation SAMU",
+        dose_induction: "1-2 mg/kg IV (ou 4 mg/kg IM)",
+        dose_entretien: "0.5-1 mg/kg/h IVSE",
+        dose_max: "150 mg induction",
+        delai: "30-60s IV / 3-5 min IM",
+        duree: "10-15 minutes",
+        avantages: [
+          "Maintien tonus sympathique → PA stable voire ↑",
+          "Bronchodilatateur puissant",
+          "Analgésie + Sédation (dissociative)",
+          "Maintien ventilation spontanée aux faibles doses",
+          "Excellente pour SAMU/contexte précaire"
+        ],
+        inconvenients: [
+          "Augmentation PIC (relatif — débat actuel)",
+          "Hypersécrétion bronchique (prémédiquer atropine)",
+          "Hallucinations/cauchemars (prévenir par benzodiazépine)",
+          "Tachycardie et HTA (attention coronarien)"
+        ],
+        ci: [
+          "HTIC confirmée (relatif — débat dans littérature récente)",
+          "HTA sévère non contrôlée",
+          "Angor instable / IDM récent",
+          "Psychose aiguë non sédée",
+          "Pré-éclampsie / éclampsie"
+        ],
+        precautions: "Associer midazolam 0.05 mg/kg pour prévenir les phénomènes dissociatifs. Atropine 0.01 mg/kg si hypersécrétion.",
+        grossesse: "Possible en urgence (passage placentaire mais utilisé en obstétrique)",
+        couleur_fiole: "#fff8e0"
+      },
+      {
+        name: "Propofol",
+        dci: "Propofol",
+        specialite: "Diprivan® 1% ou 2%",
+        classe: "Alkylphénol",
+        presentation: "200 mg/20 mL (10 mg/mL) — 1% · 500 mg/50 mL (10 mg/mL) pour IVSE",
+        indication: "Induction bloc opératoire (patient stable), sédation IVSE réanimation",
+        dose_induction: "1.5-2.5 mg/kg IV (titration lente)",
+        dose_entretien: "3-6 mg/kg/h IVSE",
+        dose_max: "200 mg induction",
+        delai: "15-45 secondes",
+        duree: "5-10 minutes",
+        avantages: [
+          "Réveil rapide et de qualité",
+          "Antiémétique",
+          "Bronchodilatateur modéré",
+          "Titration facile en IVSE"
+        ],
+        inconvenients: [
+          "Dépression hémodynamique significative (vasodilatation + inotropisme négatif)",
+          "Apnée fréquente",
+          "Douleur injection (diluer ou veine centrale)",
+          "Syndrome de perfusion au propofol (PRIS) si > 48h à dose élevée"
+        ],
+        ci: [
+          "Allergie à l'œuf, au soja (émulsion lipidique)",
+          "ÉVITER en préhospitalier (dépression HD ++)",
+          "ÉVITER en choc quelle qu'en soit l'étiologie",
+          "Enfant < 3 ans pour sédation (PRIS)",
+          "HTIC (vasodilatation cérébrale)"
+        ],
+        precautions: "PRIS (Propofol Infusion Syndrome) : > 4 mg/kg/h pendant > 48h → acidose métabolique, rhabdomyolyse, défaillance cardiaque. Surveiller TG, CPK, lactates.",
+        grossesse: "Passage placentaire — possible court terme",
+        couleur_fiole: "#f0f0ff"
+      },
+      {
+        name: "Midazolam",
+        dci: "Midazolam",
+        specialite: "Hypnovel®",
+        classe: "Benzodiazépine",
+        presentation: "5 mg/1 mL · 5 mg/5 mL · 50 mg/10 mL",
+        indication: "Prémédication, co-induction, sédation IVSE, status epilepticus",
+        dose_induction: "0.05-0.15 mg/kg IV (titration)",
+        dose_entretien: "0.02-0.1 mg/kg/h IVSE",
+        dose_status: "0.1 mg/kg IV ou 10 mg IM (status)",
+        delai: "1-3 minutes",
+        duree: "15-30 minutes (accumulation si IVSE longue)",
+        avantages: [
+          "Amnésie antérograde fiable",
+          "Anticonvulsivant",
+          "Myorelaxant central",
+          "Antagonisable (flumazénil)"
+        ],
+        inconvenients: [
+          "Accumulation si IVSE prolongée (réveils difficiles)",
+          "Dépression respiratoire + HD synergique aux opioïdes",
+          "Demi-vie active longue en insuffisance rénale/hépatique",
+          "Délire de sédation chez le sujet âgé"
+        ],
+        ci: [
+          "Allergie aux BZD",
+          "Myasthénie grave",
+          "Syndrome apnées du sommeil sévère non appareillé (hors réa)",
+          "Glaucome à angle fermé"
+        ],
+        precautions: "Antagoniste : Flumazénil 0.2 mg IV (répéter 0.1 mg/min jusqu'à 1 mg). Demi-vie flumazénil < midazolam → resédation possible. Adapter doses chez l'insuffisant hépatique.",
+        grossesse: "Passage placentaire — éviter surtout T3",
+        couleur_fiole: "#f8f0ff"
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════
+  // MORPHINIQUES
+  // ══════════════════════════════════════════════════
+  morphiniques: {
+    label: "Morphiniques",
+    color: "#ff9800",
+    icon: "🟠",
+    drugs: [
+      {
+        name: "Sufentanil",
+        dci: "Sufentanil",
+        specialite: "Sufenta®",
+        classe: "Opioïde µ — 10x plus puissant que fentanyl",
+        presentation: "250 µg/5 mL (50 µg/mL) · 500 µg/10 mL",
+        indication: "Analgésie-sédation réanimation (gold standard), co-induction",
+        dose_induction: "0.2-0.5 µg/kg IV",
+        dose_entretien: "0.1-0.5 µg/kg/h IVSE",
+        dose_max: "50 µg en bolus",
+        delai: "1-3 minutes",
+        duree: "30-60 minutes (bolus)",
+        avantages: [
+          "Analgésie puissante et titratable",
+          "Bonne stabilité HD aux doses adaptées",
+          "Moins d'accumulation que morphine en IVSE",
+          "Référence analgésie réanimation France"
+        ],
+        inconvenients: [
+          "Dépression respiratoire dose-dépendante",
+          "Rigidité thoracique aux hautes doses (bolus rapide)",
+          "Constipation, iléus",
+          "Tolérance et dépendance si IVSE prolongée"
+        ],
+        ci: [
+          "Allergie aux opioïdes",
+          "IMAO (risque syndrome sérotoninergique)",
+          "Dépression respiratoire non assistée"
+        ],
+        precautions: "Antidote : Naloxone 0.4-2 mg IV (titration par 0.04 mg). Attention : demi-vie naloxone < sufentanil → resédation possible. Rigidité thoracique sur bolus rapide → succinylcholine.",
+        grossesse: "Possible court terme — dépression néonatale possible",
+        couleur_fiole: "#fff3e0"
+      },
+      {
+        name: "Rémifentanil",
+        dci: "Rémifentanil",
+        specialite: "Ultiva®",
+        classe: "Opioïde µ — ultrashort action (estérase plasmatique)",
+        presentation: "1 mg / 2 mg / 5 mg poudre (reconstituer)",
+        indication: "Sédation-analgésie titrée fine, procédures douloureuses, sevrage VM",
+        dose_entretien: "0.05-0.2 µg/kg/min IVSE",
+        dose_max: "1 µg/kg/min (anesthésie)",
+        delai: "1 minute",
+        duree: "3-5 minutes après arrêt (indépendant de la durée)",
+        avantages: [
+          "Demi-vie contexte-sensible ultra-courte (3-5 min)",
+          "Titrabilité exceptionnelle",
+          "Pas d'accumulation même après jours de perfusion",
+          "Réveil prévisible → idéal pour évaluation neurologique",
+          "Estérase plasmatique → pas d'adaptation en IR/IH"
+        ],
+        inconvenients: [
+          "JAMAIS en bolus (rigidité thoracique sévère, bradycardie)",
+          "Hyperalgésie post-opératoire si arrêt brutal",
+          "Prix élevé",
+          "Ne couvre pas la douleur à l'arrêt → analgésie relais obligatoire",
+          "Bradycardie et hypotension à hautes doses"
+        ],
+        ci: [
+          "Administration en bolus IV direct (CI absolue)",
+          "IMAO",
+          "Allergie aux opioïdes"
+        ],
+        precautions: "TOUJOURS en IVSE, JAMAIS en bolus direct. Prévoir analgésie de fond (paracétamol, morphine) avant l'arrêt. Hyperalgésie : transition sufentanil ou morphine 12-24h avant sevrage.",
+        grossesse: "Passage placentaire — possible en urgence",
+        couleur_fiole: "#fff8e0"
+      },
+      {
+        name: "Fentanyl",
+        dci: "Fentanyl",
+        specialite: "Fentanyl®",
+        classe: "Opioïde µ",
+        presentation: "500 µg/10 mL (50 µg/mL)",
+        indication: "Prémédication ISR, analgésie SAMU, co-induction",
+        dose_premedicaton: "1-3 µg/kg IV lente (3 min avant induction)",
+        dose_entretien: "1-3 µg/kg/h IVSE",
+        delai: "1-3 minutes",
+        duree: "30-60 minutes",
+        avantages: [
+          "Disponibilité universelle SAMU",
+          "Bonne maniabilité",
+          "Prévention réponse sympathique à l'intubation"
+        ],
+        inconvenients: [
+          "Accumulation en IVSE prolongée (lipophile)",
+          "Moins titrable que sufentanil/rémifentanil"
+        ],
+        ci: ["IMAO", "Allergie opioïdes"],
+        precautions: "En SAMU : 2-3 µg/kg 3 min avant induction pour atténuer la réponse hémodynamique à la laryngoscopie.",
+        grossesse: "Possible urgence",
+        couleur_fiole: "#fff3e0"
+      },
+      {
+        name: "Morphine",
+        dci: "Morphine",
+        specialite: "Morphine®",
+        classe: "Opioïde µ naturel",
+        presentation: "10 mg/1 mL · 100 mg/10 mL",
+        indication: "Analgésie titrée aux urgences, douleur aiguë sévère",
+        dose_titration: "2-3 mg IV/5 min (titration)",
+        dose_entretien: "2-5 mg/kg/h IVSE",
+        delai: "5-10 minutes",
+        duree: "2-4 heures",
+        avantages: ["Disponibilité universelle", "Faible coût", "Familiarité"],
+        inconvenients: [
+          "Accumulation en insuffisance rénale (métabolite actif M6G)",
+          "Histaminolibération",
+          "Nausées/vomissements ++",
+          "Moins titrable en réanimation"
+        ],
+        ci: ["IR sévère (accumulation M6G)", "Douleur biliaire (spasme sphincter d'Oddi)", "IMAO"],
+        precautions: "En IR : réduire doses de 50%. M6G actif s'accumule. Préférer sufentanil en réanimation.",
+        grossesse: "Possible court terme",
+        couleur_fiole: "#fff3e0"
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════
+  // CURARES
+  // ══════════════════════════════════════════════════
+  curares: {
+    label: "Curares",
+    color: "#ff6d9d",
+    icon: "⚡",
+    drugs: [
+      {
+        name: "Succinylcholine",
+        dci: "Succinylcholine (Suxaméthonium)",
+        specialite: "Célocurine®",
+        classe: "Curare dépolarisant",
+        presentation: "200 mg/2 mL (100 mg/mL) · aussi 500 mg/10 mL",
+        indication: "ISR — curarisation rapide et courte",
+        dose_isr: "1.5 mg/kg IV",
+        dose_max: "150 mg",
+        delai: "45-60 secondes",
+        duree: "8-12 minutes (cholinestérases plasmatiques)",
+        avantages: [
+          "Délai d'action le plus court (45-60s)",
+          "Durée d'action courte — sécurité si intubation impossible",
+          "Curarisation profonde et fiable"
+        ],
+        inconvenients: [
+          "Nombreuses contre-indications",
+          "Fasciculations douloureuses",
+          "Augmentation K+ de 0.5-1 mEq/L (physiologique)",
+          "Bradycardie (surtout enfant, 2e dose)",
+          "Hyperthermie maligne (rare)"
+        ],
+        ci: [
+          "⚠ KALIÉMIE > 5.5 mEq/L (risque arrêt cardiaque)",
+          "⚠ BRÛLÉS > 24-48h (up-régulation récepteurs nicotiniques → K+ ++)",
+          "⚠ TRAUMATISME MÉDULLAIRE > 24h (même mécanisme)",
+          "⚠ PARALYSIE FLASQUE / IMMOBILISATION > 72h",
+          "⚠ RHABDOMYOLYSE active",
+          "⚠ MYOPATHIES (dystrophie musculaire, myotonie)",
+          "Hyperthermie maligne (ATCD personnel ou familial)",
+          "Déficit en pseudocholinestérases (prolongation durée)",
+          "Glaucome angle fermé (fasciculations → ↑ PIO)"
+        ],
+        precautions: "Risque hyperkaliémie SÉVÈRE dans les situations d'up-régulation des récepteurs nicotiniques. Règle : brûlé > 48h, alité > 72h, lésion médullaire > 24h, myopathie → CONTRE-INDIQUÉE. Antidote : aucun (attendre hydrolyse par cholinestérases).",
+        grossesse: "Possible (cholinestérases réduites → durée légèrement prolongée)",
+        couleur_fiole: "#ffe0e8"
+      },
+      {
+        name: "Rocuronium",
+        dci: "Rocuronium",
+        specialite: "Esmeron®",
+        classe: "Curare non dépolarisant — aminostéroïde",
+        presentation: "50 mg/5 mL (10 mg/mL)",
+        indication: "ISR haute dose (CI succinylcholine), entretien curarisation",
+        dose_isr: "1.2 mg/kg IV (ISR haute dose)",
+        dose_entretien: "0.15 mg/kg IV bolus / 0.3-0.6 mg/kg/h IVSE",
+        dose_max: "120 mg ISR",
+        delai: "60-90 secondes (1.2 mg/kg)",
+        duree: "30-60 minutes (dose ISR)",
+        avantages: [
+          "Alternative à succinylcholine si CI",
+          "Réversible par sugammadex",
+          "Pas de fasciculations",
+          "Pas d'hyperkaliémie"
+        ],
+        inconvenients: [
+          "Délai légèrement > succinylcholine",
+          "Durée longue → dangereux si intubation impossible sans sugammadex",
+          "Accumulation en insuffisance hépatique"
+        ],
+        ci: [
+          "Allergie rocuronium / bromure",
+          "Myasthénie (hypersensibilité)",
+          "Sans sugammadex disponible en cas d'intubation impossible"
+        ],
+        precautions: "TOUJOURS avoir sugammadex disponible si rocuronium utilisé. Reversal CICV : sugammadex 16 mg/kg IV immédiat. Réduction dose en IH sévère.",
+        grossesse: "Passage placentaire faible — possible",
+        couleur_fiole: "#ffe0f0"
+      },
+      {
+        name: "Cisatracurium",
+        dci: "Cisatracurium",
+        specialite: "Nimbex®",
+        classe: "Curare non dépolarisant — benzylisoquinoléine",
+        presentation: "10 mg/5 mL (2 mg/mL) · 20 mg/10 mL",
+        indication: "Curarisation d'entretien en réanimation (SDRA, HTIC), insuffisance rénale/hépatique",
+        dose_bolus: "0.15-0.2 mg/kg IV",
+        dose_entretien: "1-3 µg/kg/min IVSE (0.06-0.18 mg/kg/h)",
+        delai: "3-5 minutes",
+        duree: "45-75 minutes (bolus)",
+        avantages: [
+          "Élimination indépendante de IR et IH (dégradation de Hofmann)",
+          "Pas d'accumulation en insuffisance d'organe",
+          "Pas de métabolite actif cumulatif",
+          "Très faible histaminolibération (< atracurium)",
+          "Référence curarisation d'entretien en réa"
+        ],
+        inconvenients: [
+          "Délai d'action plus long (pas pour ISR)",
+          "Prix plus élevé qu'atracurium",
+          "Laudanosine (métabolite) accumulation en IR sévère — peu clinique"
+        ],
+        ci: [
+          "Allergie cisatracurium / benzylisoquinoléines",
+          "Myasthénie (hypersensibilité)"
+        ],
+        precautions: "Monitorer curarisation : accéléromyographie (train-of-four, TOF). Cible SDRA : TOF 0/4 pendant 48h (ACURASYS). Réchauffement → durée réduite. Acidose → durée prolongée.",
+        grossesse: "Données limitées — possible si nécessaire",
+        couleur_fiole: "#f0e8ff"
+      },
+      {
+        name: "Atracurium",
+        dci: "Atracurium",
+        specialite: "Tracrium®",
+        classe: "Curare non dépolarisant — benzylisoquinoléine",
+        presentation: "25 mg/2.5 mL (10 mg/mL) · 250 mg/25 mL",
+        indication: "Entretien curarisation réanimation, IR/IH (moins utilisé que cisatracurium)",
+        dose_bolus: "0.4-0.5 mg/kg IV",
+        dose_entretien: "5-10 µg/kg/min IVSE",
+        delai: "2-3 minutes",
+        duree: "25-35 minutes",
+        avantages: [
+          "Élimination de Hofmann (indépendante IR/IH)",
+          "Moins cher que cisatracurium"
+        ],
+        inconvenients: [
+          "Histaminolibération modérée (bronchospasme possible)",
+          "Laudanosine (convulsions à hautes doses, peu clinique)"
+        ],
+        ci: ["Allergie atracurium", "Asthme sévère (histaminolibération)", "Myasthénie"],
+        precautions: "Préférer cisatracurium si disponible (moins d'effets histaminiques). Conserver entre 2-8°C.",
+        grossesse: "Possible",
+        couleur_fiole: "#f0f0ff"
+      },
+      {
+        name: "Sugammadex",
+        dci: "Sugammadex",
+        specialite: "Bridion®",
+        classe: "Cyclodextrine — reversal sélectif aminostéroïdes",
+        presentation: "200 mg/2 mL (100 mg/mL)",
+        indication: "Reversal rocuronium/vécuronium — sauvetage intubation impossible",
+        dose_routine: "2 mg/kg IV (reversal bloc modéré, TOF ≥ 2)",
+        dose_profond: "4 mg/kg IV (reversal bloc profond, TOF 0)",
+        dose_cicv: "16 mg/kg IV (CICV, reversal immédiat rocuronium ISR)",
+        delai_reversal: "3 minutes (16 mg/kg) · 5-10 minutes (2-4 mg/kg)",
+        avantages: [
+          "Seul reversal vraiment efficace des curares non dépolarisants",
+          "Reversal immédiat même bloc profond",
+          "Sécurité CICV si rocuronium utilisé",
+          "Pas d'effets muscariniques (contrairement à la néostigmine)"
+        ],
+        inconvenients: [
+          "Prix très élevé (surtout 16 mg/kg)",
+          "Réduction efficacité contraceptifs oraux 7j (encapsuler hormones stéroïdes)",
+          "Récupération insuffisante si doses inadaptées"
+        ],
+        ci: [
+          "Allergie sugammadex",
+          "IR sévère (accumulation complexe — éviter ou surveiller)"
+        ],
+        precautions: "Dose CICV (Can't Intubate Can't Ventilate) : 16 mg/kg = seule situation justifiant cette dose. Après reversal par sugammadex : re-curarisation possible jusqu'à 24h si dose insuffisante.",
+        grossesse: "Données limitées — utilisation possible urgence vitale",
+        couleur_fiole: "#e8ffe8"
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════
+  // SÉDATION ENTRETIEN
+  // ══════════════════════════════════════════════════
+  sedation: {
+    label: "Sédation — Entretien",
+    color: "#ce93d8",
+    icon: "🌙",
+    drugs: [
+      {
+        name: "Dexmédétomidine",
+        dci: "Dexmédétomidine",
+        specialite: "Dexdor® · Precedex®",
+        classe: "Agoniste α2-central sélectif",
+        presentation: "200 µg/2 mL (100 µg/mL) — diluer systématiquement",
+        indication: "Sédation légère à modérée en réanimation, sevrage VM, prévention délire post-op",
+        dose_charge: "0.5-1 µg/kg sur 10-20 min (optionnelle — souvent omise)",
+        dose_entretien: "0.2-1.4 µg/kg/h IVSE",
+        delai: "15-30 minutes pour effet optimal",
+        avantages: [
+          "Sédation coopérante : patient calme, éveillable, orienté",
+          "PAS de dépression respiratoire significative",
+          "Réduction consommation morphiniques",
+          "Diminue le délire en réanimation (vs BZD)",
+          "Sevrage VM facilité (conserve drive respiratoire)",
+          "Analgésie modérée"
+        ],
+        inconvenients: [
+          "Bradycardie (parfois sévère)",
+          "Hypotension (surtout dose de charge)",
+          "Pas de curarisation associée possible (réveil facilité)",
+          "Coût élevé",
+          "Délai d'action long"
+        ],
+        ci: [
+          "BAV 2-3° non appareillé",
+          "Choc cardiogénique",
+          "Bradycardie sévère < 50/min",
+          "IH sévère (Child C — accumulation)"
+        ],
+        precautions: "Objectif sédation : RASS −1 à 0 (sédation légère recommandée en réanimation — PAD trial). Eviter dose de charge si instabilité HD. Arrêt progressif pour éviter rebond adrénergique.",
+        grossesse: "Données insuffisantes — éviter sauf nécessité",
+        couleur_fiole: "#f0e0ff"
+      },
+      {
+        name: "Clonidine",
+        dci: "Clonidine",
+        specialite: "Catapressan®",
+        classe: "Agoniste α2 central (moins sélectif que dexmédétomidine)",
+        presentation: "150 µg/1 mL",
+        indication: "Sédation-analgésie adjuvante, sevrage morphinique/alcoolique, HTA réfractaire en réa",
+        dose_entretien: "0.3-1.2 µg/kg/h IVSE · ou 150 µg 3x/j per os",
+        dose_hta: "150-300 µg IV lente",
+        delai: "15-30 minutes",
+        avantages: [
+          "Réduction consommation morphiniques",
+          "Utile en sevrage alcoolique (prévention HTA et sueurs)",
+          "Alternative économique à la dexmédétomidine",
+          "Antihypertenseur d'urgence"
+        ],
+        inconvenients: [
+          "Moins sélectif α2 → plus d'effets périphériques",
+          "Bradycardie, hypotension",
+          "Sécheresse buccale",
+          "Rebond hypertensif si arrêt brutal"
+        ],
+        ci: [
+          "BAV 2-3°",
+          "Bradycardie < 50/min",
+          "Syndrome de Raynaud sévère"
+        ],
+        precautions: "NE JAMAIS arrêter brutalement (rebond HTA sévère). Décroissance progressive sur 5-7j. Surveiller PA et FC.",
+        grossesse: "Possible — utilisé en obstétrique pour HTA",
+        couleur_fiole: "#e8e8ff"
+      },
+      {
+        name: "Propofol IVSE",
+        dci: "Propofol",
+        specialite: "Diprivan® 2%",
+        classe: "Alkylphénol",
+        presentation: "1000 mg/50 mL (20 mg/mL) — flacon 50 mL",
+        indication: "Sédation courte durée réanimation, post-op chirurgie cardiaque",
+        dose_entretien: "0.5-4 mg/kg/h IVSE (réanimation)",
+        precautions: "SYNDROME DE PERFUSION AU PROPOFOL (PRIS) : dose > 4 mg/kg/h pendant > 48h. Signes : acidose métabolique inexpliquée, hypertriglycéridémie, CPK ↑, ECG (BBD, sus-ST), défaillance cardiaque. Surveiller TG quotidiens, CPK, lactates. STOPPER si PRIS suspecté.",
+        ci: ["Allergie œuf/soja", "HTIC", "Enfant < 16 ans en sédation prolongée", "IR/IH sévère (accumulation)"],
+        avantages: ["Réveil rapide", "Titration facile"],
+        inconvenients: ["PRIS si > 48h haute dose", "Dépression HD", "Hyperlipidémie (émulsion 10%)"],
+        grossesse: "Passage placentaire — éviter",
+        couleur_fiole: "#f0f0ff"
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════════════
+  // ANTAGONISTES
+  // ══════════════════════════════════════════════════
+  antagonistes: {
+    label: "Antagonistes & Antidotes",
+    color: "#00e676",
+    icon: "🔄",
+    drugs: [
+      {
+        name: "Naloxone",
+        dci: "Naloxone",
+        specialite: "Narcan®",
+        classe: "Antagoniste opioïde pur",
+        presentation: "0.4 mg/1 mL · 2 mg/2 mL",
+        indication: "Surdosage opioïde, dépression respiratoire post-anesthésique",
+        dose_titration: "0.04-0.1 mg IV/2-3 min (titration prudente)",
+        dose_urgence: "0.4-2 mg IV (urgence — ACR opioïde)",
+        delai: "1-2 minutes",
+        duree: "30-90 minutes",
+        avantages: ["Reversal rapide et fiable", "Disponibilité universelle"],
+        inconvenients: [
+          "Demi-vie PLUS COURTE que la plupart des opioïdes → resédation !",
+          "Titration nécessaire (ne pas donner d'emblée 2 mg si patient sous morphine chronique → syndrome de sevrage aigu)",
+          "Douleur aiguë si levée brutale analgésie"
+        ],
+        ci: ["Aucune en urgence vitale"],
+        precautions: "En titration : 0.04 mg IV/2-3 min jusqu'à FR > 12/min. Surveiller 2-4h après (resédation possible). En ACR sur opioïde : 2 mg IV direct.",
+        grossesse: "Possible en urgence (sevrage néonatal possible)",
+        couleur_fiole: "#e8ffe8"
+      },
+      {
+        name: "Flumazénil",
+        dci: "Flumazénil",
+        specialite: "Anexate®",
+        classe: "Antagoniste BZD",
+        presentation: "0.5 mg/5 mL · 1 mg/10 mL",
+        indication: "Reversal BZD (sédation excessive, diagnostic coma BZD)",
+        dose_titration: "0.2 mg IV puis 0.1 mg/min jusqu'à réveil (max 1 mg)",
+        delai: "1-2 minutes",
+        duree: "30-60 minutes",
+        avantages: ["Diagnostic et thérapeutique des intox BZD"],
+        inconvenients: [
+          "Demi-vie 1h < midazolam → resédation quasi-certaine",
+          "Crises convulsives si dépendance BZD (sevrage brutal)",
+          "Tachycardie, HTA"
+        ],
+        ci: ["Dépendance BZD connue (risque état de mal épileptique)", "Épilepsie traitée par BZD"],
+        precautions: "Surveiller 4-6h minimum après administration (resédation). Ne jamais donner d'emblée si suspicion dépendance.",
+        grossesse: "Possible urgence",
+        couleur_fiole: "#e8ffe8"
+      },
+      {
+        name: "Sugammadex",
+        dci: "Sugammadex",
+        specialite: "Bridion®",
+        classe: "Cyclodextrine",
+        presentation: "200 mg/2 mL",
+        indication: "Reversal rocuronium/vécuronium",
+        dose_cicv: "16 mg/kg IV (CICV — sauvetage)",
+        dose_profond: "4 mg/kg (TOF 0)",
+        dose_modere: "2 mg/kg (TOF ≥ 2)",
+        delai: "3 min (16 mg/kg) · 5-10 min (2-4 mg/kg)",
+        avantages: ["Reversal immédiat et fiable", "Sauvetage CICV"],
+        inconvenients: ["Prix", "Inefficace sur succinylcholine et autres curares"],
+        ci: ["IR sévère", "Allergie"],
+        precautions: "Dose CICV : 16 mg/kg soit ~1200 mg pour 75 kg = 6 ampoules de 200 mg. Toujours disponible si rocuronium utilisé.",
+        grossesse: "Possible urgence vitale",
+        couleur_fiole: "#e8ffe8"
+      }
+    ]
+  }
+};
+
+
+// ═══════════════════════════════════════════════════
+// RENDU PHARMACO
+// ═══════════════════════════════════════════════════
+function renderPharmaco() {
+  const cats = Object.keys(PHARMACO);
+  if (!S.pharma_cat) S.pharma_cat = cats[0];
+  if (!S.pharma_drug) S.pharma_drug = null;
+
+  const cat = PHARMACO[S.pharma_cat];
+
+  const catNav = cats.map(k => {
+    const c = PHARMACO[k];
+    return `<button class="capno-btn${S.pharma_cat===k?' active':''}"
+      onclick="S.pharma_cat='${k}';S.pharma_drug=null;refresh()"
+      style="border-color:${S.pharma_cat===k?c.color+'60':'var(--border)'};color:${S.pharma_cat===k?c.color:'#2a4060'}">
+      ${c.icon} ${c.label}
+    </button>`;
+  }).join('');
+
+  // Drug list
+  const drugList = cat.drugs.map((d, i) => {
+    const active = S.pharma_drug === i;
+    return `<button onclick="S.pharma_drug=${active?'null':i};refresh()"
+      style="display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:6px;
+      background:${active?cat.color+'15':'var(--bg4)'};
+      border:1px solid ${active?cat.color+'50':'var(--border)'};
+      border-radius:4px;cursor:pointer;transition:all .15s;font-family:inherit">
+      <div style="font-family:monospace;font-size:11px;font-weight:700;color:${active?cat.color:'var(--text)'}">
+        ${d.name}
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px">${d.specialite} · ${d.classe}</div>
+    </button>`;
+  }).join('');
+
+  // Drug detail
+  let detail = `<div style="display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--dim);font-family:monospace;font-size:10px;letter-spacing:2px;text-align:center">
+    SÉLECTIONNER<br><span style="color:#0a2030">UNE MOLÉCULE</span>
+  </div>`;
+
+  if (S.pharma_drug !== null && cat.drugs[S.pharma_drug]) {
+    const d = cat.drugs[S.pharma_drug];
+
+    const ciHtml = (d.ci || []).map(c => {
+      const isDanger = c.startsWith('⚠');
+      return `<li style="color:${isDanger?'#ff7070':'#8090a0'};font-weight:${isDanger?'600':'400'}">${c}</li>`;
+    }).join('');
+
+    const avHtml = (d.avantages || []).map(a =>
+      `<li style="color:#60d090">${a}</li>`
+    ).join('');
+
+    const inconvHtml = (d.inconvenients || []).map(a =>
+      `<li style="color:#c09060">${a}</li>`
+    ).join('');
+
+    const dosesHtml = [
+      ['Induction / ISR', d.dose_induction || d.dose_isr],
+      ['ISR haute dose', d.dose_isr && d.name.includes('Rocuronium') ? d.dose_isr : null],
+      ['Entretien IVSE', d.dose_entretien],
+      ['Pré-médication', d.dose_premedicaton || d.dose_premedicaton],
+      ['Status/Urgence', d.dose_status || d.dose_urgence || d.dose_cicv],
+      ['Bloc profond', d.dose_profond],
+      ['Bloc modéré', d.dose_modere || d.dose_routine],
+      ['Dose max', d.dose_max],
+      ['Titration', d.dose_titration],
+      ['Charge', d.dose_charge],
+      ['Délai action', d.delai],
+      ['Durée action', d.duree],
+    ].filter(([,v]) => v).map(([l,v]) =>
+      `<tr><td>${l}</td><td style="color:var(--cyan);font-family:monospace">${v}</td></tr>`
+    ).join('');
+
+    detail = `
+    <div style="font-family:monospace;font-size:11px;font-weight:700;color:${cat.color};margin-bottom:4px">${d.name}</div>
+    <div style="font-size:9px;color:var(--muted);margin-bottom:12px">${d.specialite} · ${d.presentation}</div>
+
+    <div style="font-size:9px;color:var(--dim);padding:8px 10px;background:#030810;border-radius:3px;border-left:2px solid ${cat.color}40;margin-bottom:12px;line-height:1.7">
+      ${d.indication}
+    </div>
+
+    <div class="ct" style="margin-bottom:8px">DOSES</div>
+    <table class="kv" style="margin-bottom:12px">${dosesHtml}</table>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <div class="ablbl" style="color:#00e67655;margin-bottom:4px">AVANTAGES</div>
+        <ul style="padding-left:14px;font-size:10px;line-height:1.8">${avHtml}</ul>
+      </div>
+      <div>
+        <div class="ablbl" style="color:#ff985555;margin-bottom:4px">INCONVÉNIENTS</div>
+        <ul style="padding-left:14px;font-size:10px;line-height:1.8">${inconvHtml}</ul>
+      </div>
+    </div>
+
+    <div class="ct" style="margin-bottom:8px;color:#ff5252">CONTRE-INDICATIONS</div>
+    <ul style="padding-left:14px;font-size:10px;line-height:1.9;margin-bottom:12px">${ciHtml}</ul>
+
+    <div style="background:#ff52520a;border:1px solid #ff525225;border-left:3px solid #ff5252;border-radius:0 3px 3px 0;padding:10px 12px;font-size:10px;color:#c07070;line-height:1.8;margin-bottom:10px">
+      <div style="font-family:monospace;font-size:8px;letter-spacing:2px;color:#ff5252;margin-bottom:5px">⚠ PRÉCAUTIONS</div>
+      ${d.precautions || '—'}
+    </div>
+
+    <div style="font-size:9px;color:var(--dim);padding:6px 10px;background:#030810;border-radius:3px;font-family:monospace">
+      GROSSESSE : ${d.grossesse || 'Données insuffisantes'}
+    </div>`;
+  }
+
+  return `
+  <div class="capno-nav" style="margin-bottom:14px">${catNav}</div>
+  <div class="g2">
+    <div class="card" style="border-color:${cat.color}25">
+      <div class="ct">${cat.icon} ${cat.label.toUpperCase()}</div>
+      ${drugList}
+    </div>
+    <div class="card">
+      <div class="ct">FICHE MOLÉCULE</div>
+      ${detail}
+    </div>
+  </div>`;
+}
+
 </script>
 </body>
 </html>
+<!-- PHARMACO PATCH — injected by v4 build -->
