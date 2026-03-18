@@ -160,10 +160,13 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <div class="toolrow">
       <div class="toolgrp">
         <div class="lbl">MODE VENTILATOIRE</div>
-        <div class="btnrow" id="mode-btns">
-          <button class="btn ac" data-mode="vcv">📐 VCV</button>
-          <button class="btn" data-mode="vaci">🔄 VACI</button>
-          <button class="btn" data-mode="vsai">💨 VSAI</button>
+        <div class="btnrow" id="mode-btns" style="flex-wrap:wrap">
+          <button class="btn ac" data-mode="vcv">VCV</button>
+          <button class="btn" data-mode="vcpcp">VCP</button>
+          <button class="btn" data-mode="vaci">VACI</button>
+          <button class="btn" data-mode="vsai">VSAI</button>
+          <button class="btn" data-mode="cpap">CPAP</button>
+          <button class="btn" data-mode="bipap">BiPAP</button>
         </div>
       </div>
       <div class="toolgrp">
@@ -189,15 +192,42 @@ const SC={
   bpco:{label:"BPCO décomp.",C:80,R:25,peep:5,color:"#ffca28",bcls:"b-amber",bcls2:"aa",etco2_base:52,desc:"Obstruction bronchique majeure, τ élevée.",triggers:{freq:.4,effort:"modéré"}}
 };
 const MD={
-  vcv:{label:"VCV",color:"#00e5ff",acls:"ac",full:"Ventilation Contrôlée en Volume",
-    desc:"Volume courant imposé. Pression résultante. Débit carré. Plateau télé-inspiratoire.",
-    mooc:"Sem. 2 — Pcrete = résistive (R×Flow) + élastique (Vt/C) + PEEP."},
-  vaci:{label:"VAC/VACI",color:"#00e676",acls:"ag",full:"Ventilation Assistée Contrôlée / Intermittente",
-    desc:"Cycles contrôlés garantis + cycles spontanés intercalés. Transition vers sevrage.",
-    mooc:"Sem. 3 — Maintien du drive respiratoire, prévention atrophie diaphragmatique."},
-  vsai:{label:"VSAI/AI",color:"#ff6d9d",acls:"ap",full:"Ventilation Spontanée avec Aide Inspiratoire",
-    desc:"Chaque cycle déclenché par le patient. Plateau = PEEP + PS. Mode de sevrage.",
-    mooc:"Sem. 4 — Sevrage progressif : PS 20→15→12→8→5. Extubation si PS ≤ 7 cmH₂O."}
+  vcv:{label:"VCV",color:"#00e5ff",acls:"ac",
+    full:"Ventilation Contrôlée en Volume",
+    invasif:true, spontane:false,
+    variables:["vt","fr","peep","ie","fio2"],
+    desc:"Volume courant imposé. Pression résultante (dépend de C et R). Débit carré. Plateau télé-inspiratoire.",
+    mooc:"Sem. 2 — Pcrete = résistive (R×Flow) + élastique (Vt/C) + PEEP. Surveiller Pplat et driving pressure."},
+  vcpcp:{label:"VCP",color:"#00b8d4",acls:"ac",
+    full:"Ventilation Contrôlée en Pression",
+    invasif:true, spontane:false,
+    variables:["pip","peep","fr","ie","fio2"],
+    desc:"Pression d'insufflation imposée (PIP). Volume résultant — dépend de C et R. Débit décélérant. Vt non garanti.",
+    mooc:"Si compliance ↓ (SDRA) → Vt ↓. Surveiller le Vt expiré. Avantage : pression limitée et profil de débit plus physiologique."},
+  vaci:{label:"VACI",color:"#00e676",acls:"ag",
+    full:"Ventilation Assistée Contrôlée Intermittente",
+    invasif:true, spontane:true,
+    variables:["vt","fr","peep","ps","fio2"],
+    desc:"Cycles contrôlés garantis (FR réglée, Vt garanti) + cycles spontanés intercalés amplifiés par une aide inspiratoire.",
+    mooc:"Sem. 3 — Maintien du drive respiratoire, prévention atrophie diaphragmatique. Transition sédation → sevrage."},
+  vsai:{label:"VSAI/AI",color:"#ff6d9d",acls:"ap",
+    full:"Ventilation Spontanée avec Aide Inspiratoire",
+    invasif:true, spontane:true,
+    variables:["peep","ps","fio2"],
+    desc:"Chaque cycle déclenché par le patient. Pression plateau = PEEP + PS. Débit décélérant. Vt non réglé — résultante de l'effort patient, C, R et PS.",
+    mooc:"Sem. 4 — Régler PS (pression de support) et PEEP uniquement. Sevrage progressif PS 20→15→12→8→5. Extubation si PS ≤ 7 cmH₂O."},
+  cpap:{label:"CPAP",color:"#ffca28",acls:"aa",
+    full:"Continuous Positive Airway Pressure",
+    invasif:false, spontane:true,
+    variables:["peep","fio2"],
+    desc:"Pression positive continue sans aide inspiratoire. Patient fait tout le travail ventilatoire. Pas d'insufflation ventilateur.",
+    mooc:"Utilisé pour les Tests de Ventilation Spontanée (TVS) avant extubation, et en VNI pour l'apnée du sommeil / OAP cardiogénique."},
+  bipap:{label:"BiPAP/VS-AI",color:"#ce93d8",acls:"ap",
+    full:"Ventilation Non Invasive BiPAP / VS-AI",
+    invasif:false, spontane:true,
+    variables:["pip","peep","fio2"],
+    desc:"Ventilation non invasive au masque. Deux niveaux de pression : IPAP (inspiration) et EPAP (expiration = PEEP). Aide inspiratoire = IPAP − EPAP.",
+    mooc:"VNI de premier choix en BPCO (IRA hypercapnique), OAP cardiogénique. Évite l'intubation dans 50-60% des cas si démarrage précoce."}
 };
 
 // ISR — protocoles drogues
@@ -300,7 +330,7 @@ const CAPNO_PROFILES={
 // ═══════════════════════════════════════════════════
 const S={
   mode:"vcv",scen:"normal",tab:"courbes",
-  vt:500,fr:16,peep:5,ie:.4,fio2:40,ps:12,
+  vt:500,fr:16,peep:5,ie:.4,fio2:40,ps:12,pip:20,
   cTaille:170,cSexe:"H",cPath:"normal",cResult:null,
   fiche:"physio",
   isr_protocol:"etomidate_succinyl",isr_poids:75,isr_macocha:{},
@@ -319,18 +349,40 @@ function genCurves(steps=280){
   for(let i=0;i<steps;i++){
     const t=(i/steps)*Tt,tc=t%Tt,insp=tc<Ti;
     let p,q,v;
+    // ── VCV ──
     if(S.mode==="vcv"){
       if(insp){const tr=tc/Ti;if(tr<.8){q=Fp;v=q*tc;p=R*q+(v/(C/1000))+S.peep;}else{q=0;v=Vt;p=(Vt/(C/1000))+S.peep;}}
       else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=(v/(C/1000))+S.peep;if(te>Te*.85&&v>.05*Vt&&R>20&&!asyncs.includes("auto-PEEP"))asyncs.push("auto-PEEP");}
+    // ── VCP (pression contrôlée) ──
+    }else if(S.mode==="vcpcp"){
+      const pip=S.pip,dp=pip-S.peep;
+      if(insp){const tr=tc/Ti;const tau_i=R*C/1000;v=dp*(C/1000)*(1-Math.exp(-tc/tau_i));q=(dp*(C/1000)/tau_i)*Math.exp(-tc/tau_i);p=S.peep+dp*(1-Math.exp(-tc/tau_i)*0.1);}
+      else{const te=tc-Ti,tau=R*C/1000;const Vt_vcp=dp*(C/1000)*(1-Math.exp(-Ti/tau));v=Vt_vcp*Math.exp(-te/tau);q=-(Vt_vcp/tau)*Math.exp(-te/tau);p=(v/(C/1000))+S.peep;if(te>Te*.85&&v>.05*Vt_vcp&&R>20&&!asyncs.includes("auto-PEEP"))asyncs.push("auto-PEEP");}
+    // ── VACI ──
     }else if(S.mode==="vaci"){
       const spon=Math.floor(t/Tt)%3===2;
       if(insp){const tr=tc/Ti;if(spon){q=Fp*Math.sin(Math.PI*tr);v=Vt*.7*tr;p=S.peep+(Vt*.7*tr/(C/1000))+R*q*.5;}else{q=tr<.8?Fp:0;v=q>0?q*tc:Vt;p=R*(q>0?q:0)+(Math.min(v,Vt)/(C/1000))+S.peep;}}
       else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=(v/(C/1000))+S.peep;}
-    }else{
+    // ── VSAI/AI ──
+    }else if(S.mode==="vsai"){
       if(insp){const tr=tc/Ti;if(tr<.05){p=S.peep-(SC[S.scen].triggers.effort==="intense"?4:2);q=.1;v=0;if(SC[S.scen].triggers.effort==="intense"&&!asyncs.includes("double-trigger"))asyncs.push("double-trigger");}
       else{q=Fp*(1-tr)*2;v=Vt*(1-Math.exp(-3*tr));p=S.peep+S.ps;}
       if(SC[S.scen].triggers.freq<.15&&!asyncs.includes("non-trigger"))asyncs.push("non-trigger");}
       else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=S.peep+Math.max(0,S.ps*Math.exp(-te*3));}
+    // ── CPAP ──
+    }else if(S.mode==="cpap"){
+      // Respiration spontanée pure — sinusoïde avec légère irrégularité
+      const phase=tc/Tt;const effort=SC[S.scen].triggers.freq>0.2?0.8:0.5;
+      q=Fp*effort*Math.sin(Math.PI*phase)*1.2;
+      v=Math.max(0,Vt*effort*(1-Math.cos(Math.PI*phase))/2);
+      p=S.peep+(insp?-1.5:0.5);// légère dépression insp, légère surpression exp
+    // ── BiPAP/VNI ──
+    }else if(S.mode==="bipap"){
+      const ipap=S.pip, epap=S.peep, ps_vni=ipap-epap;
+      if(insp){const tr=tc/Ti;if(tr<.05){p=epap-(SC[S.scen].triggers.effort==="intense"?3:1.5);q=.1;v=0;}
+      else{q=Fp*(1-tr)*1.8;v=Vt*(1-Math.exp(-2.5*tr));p=ipap;}}
+      else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=epap+Math.max(0,ps_vni*Math.exp(-te*2));}
+      if(SC[S.scen].triggers.freq<.15&&!asyncs.includes("non-trigger"))asyncs.push("non-trigger");
     }
     P.push(Math.max(S.peep-6,p||S.peep));Q.push((q||0)*60);V.push(Math.max(0,(v||0)*1000));
   }
@@ -339,14 +391,41 @@ function genCurves(steps=280){
 
 function getMetrics(){
   const sc=SC[S.scen];
-  const pplat=Math.round(S.vt/sc.C+S.peep);
-  const pmax=Math.round(S.vt/sc.C+sc.R*(S.vt/1000/(S.fr/60*S.ie*.8))+S.peep);
-  const drv=pplat-S.peep;
+  let pplat,pmax,drv,ve,vt_eff;
   const tau=sc.R*sc.C/1000;
   const te=(1-S.ie)/(S.fr/60);
   const autoP=sc.R>20&&te<tau*3;
-  const ve=Math.round(S.vt*S.fr/100)/10;
-  return{pplat,pmax,drv,autoP,ve,tau};
+
+  if(S.mode==="vcpcp"||S.mode==="bipap"){
+    // Mode pression : Vt est résultant
+    const dp=(S.pip||20)-S.peep;
+    vt_eff=Math.round(dp*(sc.C));// mL
+    pplat=S.pip;
+    pmax=S.pip;
+    drv=Math.round(S.pip-S.peep);
+    ve=Math.round(vt_eff*(S.fr||14)/1000*10)/10;
+  }else if(S.mode==="vsai"){
+    // VSAI : Vt estimé par effort + mécanique
+    vt_eff=Math.round((S.ps*sc.C)*0.8);
+    pplat=Math.round(S.peep+S.ps);
+    pmax=pplat;
+    drv=S.ps;
+    ve=Math.round(vt_eff*(S.fr||14)/1000*10)/10;
+  }else if(S.mode==="cpap"){
+    vt_eff=Math.round(S.vt*0.7);
+    pplat=Math.round(S.peep+3);
+    pmax=pplat;
+    drv=3;
+    ve=Math.round(vt_eff*14/1000*10)/10;
+  }else{
+    // VCV / VACI
+    vt_eff=S.vt;
+    pplat=Math.round(S.vt/sc.C+S.peep);
+    pmax=Math.round(S.vt/sc.C+sc.R*(S.vt/1000/(S.fr/60*S.ie*.8))+S.peep);
+    drv=pplat-S.peep;
+    ve=Math.round(S.vt*S.fr/100)/10;
+  }
+  return{pplat,pmax,drv,autoP,ve,tau,vt_eff};
 }
 
 function drawWave(id,data,color){
@@ -518,19 +597,30 @@ function renderCourbes(){
   <div>
     <div class="card" style="border-color:${m.color}25">
       <div class="ct">${m.full.toUpperCase()}</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <span style="font-family:monospace;font-size:8px;padding:2px 8px;border-radius:2px;background:${m.invasif?'#ff525215':'#00e67615'};border:1px solid ${m.invasif?'#ff525230':'#00e67630'};color:${m.invasif?'#ff7070':'#60d090'}">
+          ${m.invasif?"🔴 INVASIF":"🟢 NON INVASIF"}
+        </span>
+        <span style="font-family:monospace;font-size:8px;padding:2px 8px;border-radius:2px;background:${m.spontane?'#ce93d815':'#00e5ff15'};border:1px solid ${m.spontane?'#ce93d830':'#00e5ff30'};color:${m.spontane?'#ce93d8':'#00e5ff'}">
+          ${m.spontane?"💨 DÉCLENCHÉ PATIENT":"🤖 CONTRÔLÉ VENTILATEUR"}
+        </span>
+      </div>
       <div style="font-size:11px;color:#607080;line-height:1.8;margin-bottom:10px">${m.desc}</div>
       <div style="font-size:9px;color:#1e3a52;padding:8px 10px;background:#030810;border-radius:3px;border-left:2px solid ${m.color}40">📌 ${m.mooc}</div>
     </div>
     <div class="card">
       <div class="ct">MÉTRIQUES</div>
       <div class="g3" style="margin-bottom:10px">
-        ${mbox(met.pplat,"P PLATEAU","cmH₂O",met.pplat>30,false)}
+        ${mbox(met.pplat,S.mode==="vcpcp"||S.mode==="bipap"?"PIP / IPAP":"P PLATEAU","cmH₂O",S.mode!=="vcpcp"&&S.mode!=="bipap"&&met.pplat>30,false)}
         ${mbox(met.drv,"DRIVING P.","cmH₂O",false,met.drv>15)}
-        ${mbox(met.pmax,"P CRÊTE","cmH₂O",met.pmax>40,false)}
+        ${mbox(met.vt_eff,S.mode==="vcpcp"||S.mode==="bipap"||S.mode==="vsai"?"Vt CALCULÉ":"Vt RÉGLÉ","mL",false,false,S.mode==="vcpcp"||S.mode==="bipap"||S.mode==="vsai"?"#ffca28":"#00e5ff")}
         ${mbox(met.ve,"VE","L/min",false,false,"#00e676")}
         ${mbox(sc.C,"COMPLIANCE","mL/cmH₂O",false,false,sc.color)}
         ${mbox(met.autoP?"RISQUE":"OK","AUTO-PEEP","τ="+Math.round(met.tau*100)/100+"s",false,met.autoP,met.autoP?"#ffca28":"#00e676")}
       </div>
+      ${(S.mode==="vcpcp"||S.mode==="bipap")?`<div class="al a-w" style="margin-bottom:8px">Mode pression — <strong>Vt non garanti</strong> (${met.vt_eff} mL estimé). Surveiller le Vt expiré mesuré sur le ventilateur.</div>`:''}
+      ${S.mode==="cpap"?`<div class="al a-i" style="margin-bottom:8px">CPAP — Patient ventile spontanément. Aucune aide inspiratoire. Utiliser pour TVS ou apnée du sommeil.</div>`:''}
+      ${S.mode==="bipap"?`<div class="al a-p" style="margin-bottom:8px">VNI BiPAP — IPAP = ${S.pip} cmH₂O · EPAP = ${S.peep} cmH₂O · PS = ${S.pip-S.peep} cmH₂O · Interface masque facial ou nasobuccal.</div>`:''}
       ${met.pplat>30?`<div class="al a-d">Pplat > 30 cmH₂O — ↓ Vt → 6 mL/kg PI (ARDSNet).</div>`:''}
       ${met.drv>15?`<div class="al a-w">Driving P > 15 cmH₂O — mortalité ↑ au SDRA (Amato 2015).</div>`:''}
       ${met.autoP?`<div class="al a-w">Auto-PEEP probable — τ=${Math.round(sc.R*sc.C)}ms. ↓ FR ou ↑ Te.</div>`:''}
@@ -713,14 +803,19 @@ function renderISR(){
 
 function renderParams(){
   const sc=SC[S.scen];
-  const sliders=[
-    {k:"vt",l:"Volume courant (Vt)",u:"mL",min:200,max:800,st:10,c:"#00e5ff",hint:"Cible 6-8 mL/kg PI. SDRA : 6 mL/kg strict (ARDSNet)."},
-    {k:"fr",l:"Fréquence respiratoire",u:"/min",min:8,max:35,st:1,c:"#00e5ff",hint:"Standard 14-18/min. BPCO : ↓ FR pour ↑ Te."},
-    {k:"peep",l:"PEEP",u:"cmH₂O",min:0,max:20,st:1,c:"#00e676",hint:"SDRA : table ARDSNet. BPCO : extrinsèque ≤ 85% auto-PEEP."},
-    {k:"fio2",l:"FiO₂",u:"%",min:21,max:100,st:1,c:"#00e676",hint:"Cible SpO₂ 94-98%. FiO₂ > 60% prolongée : toxicité O₂."},
-    {k:"ie",l:"Ratio I/(I+E)",u:"",min:.2,max:.6,st:.05,c:"#ff6d9d",hint:"Standard 0.33 (I:E=1:2). BPCO : ↓ 0.25 pour ↑ Te."},
-  ];
-  if(S.mode==="vsai")sliders.push({k:"ps",l:"Aide inspiratoire (PS)",u:"cmH₂O",min:0,max:25,st:1,c:"#ff6d9d",hint:"Sevrage : PS 20→15→12→8→5. Test VS si PS ≤ 7 cmH₂O."});
+  const m=MD[S.mode];
+  const vars=m.variables||["vt","fr","peep","ie","fio2"];
+  // Définition complète de tous les sliders possibles
+  const ALL_SLIDERS={
+    vt:  {k:"vt", l:"Volume courant (Vt)",        u:"mL",    min:200,max:800,st:10,  c:"#00e5ff",hint:"Cible 6-8 mL/kg PI. SDRA : 6 mL/kg strict (ARDSNet)."},
+    fr:  {k:"fr", l:"Fréquence respiratoire",      u:"/min",  min:8,  max:35, st:1,   c:"#00e5ff",hint:"Standard 14-18/min. BPCO : ↓ FR pour ↑ Te."},
+    peep:{k:"peep",l:"PEEP / EPAP",                u:"cmH₂O", min:0,  max:20, st:1,   c:"#00e676",hint:"SDRA : table ARDSNet. VNI : EPAP 4-8 cmH₂O. BPCO : ≤ 85% auto-PEEP."},
+    ie:  {k:"ie", l:"Ratio I/(I+E)",               u:"",      min:.2, max:.6, st:.05, c:"#ff6d9d",hint:"Standard 0.33 (I:E=1:2). BPCO : ↓ 0.25 pour ↑ Te."},
+    fio2:{k:"fio2",l:"FiO₂",                       u:"%",     min:21, max:100,st:1,   c:"#00e676",hint:"Cible SpO₂ 94-98%. VNI : limité à 60% selon interface."},
+    ps:  {k:"ps", l:"Aide inspiratoire (PS)",      u:"cmH₂O", min:0,  max:25, st:1,   c:"#ff6d9d",hint:"Sevrage : PS 20→15→12→8→5. Test VS si PS ≤ 7 cmH₂O."},
+    pip: {k:"pip",l:"PIP / IPAP (pression insp.)", u:"cmH₂O", min:8,  max:40, st:1,   c:"#00b8d4",hint:"VCP : pression crête cible. VNI : IPAP 10-20 cmH₂O. PS = IPAP − EPAP."},
+  };
+  const sliders=vars.map(k=>ALL_SLIDERS[k]).filter(Boolean);
   return`<div class="g2">
   <div class="card">
     <div class="ct">RÉGLAGES VENTILATOIRES</div>
@@ -845,13 +940,83 @@ physio:`<h2>01 — BASES PHYSIOLOGIE VENTILATOIRE</h2>
 <div class="memo"><div class="memo-title">📌 À RETENIR</div>Ppeak − Pplat = résistif · Pplat − PEEP = élastique (driving)<br>Pplat ↑ + Ppeak ↑ → compliance ↓ (SDRA, pneumothorax)<br>Ppeak ↑ + Pplat stable → résistance ↑ (bronchospasme, sécrétions)</div>`,
 
 modes:`<h2>02 — MODES VENTILATOIRES</h2>
-<h3>VCV — Ventilation Contrôlée en Volume</h3>
-<table class="kv"><tr><td>Variable contrôlée</td><td>Volume courant</td></tr><tr><td>Variable résultante</td><td>Pression (variable !)</td></tr><tr><td>Profil débit</td><td>Carré ou décélérant</td></tr><tr><td>Avantage</td><td>Vt garanti, VE stable</td></tr><tr><td>Surveillance</td><td>Pplat et driving à chaque réglage</td></tr></table>
-<h3>VACI — Ventilation Assistée Contrôlée Intermittente</h3>
-<table class="kv"><tr><td>Cycles contrôlés</td><td>FR réglée, Vt garanti</td></tr><tr><td>Cycles spontanés</td><td>Déclenchés patient, amplifiés PS</td></tr><tr><td>Intérêt</td><td>Maintien drive, prévention atrophie</td></tr></table>
-<h3>VSAI/AI — Ventilation Spontanée avec Aide Inspiratoire</h3>
-<table class="kv"><tr><td>Déclenchement</td><td>Effort patient</td></tr><tr><td>Pression</td><td>PEEP + PS</td></tr><tr><td>Profil débit</td><td>Décélérant</td></tr><tr><td>Cyclage</td><td>25-30% débit de pointe</td></tr></table>
-<div class="memo"><div class="memo-title">📌 TRIGGER</div>Débit : −1 à −2 L/min · Pression : −0.5 à −1.5 cmH₂O<br>Régler le plus sensible sans auto-déclenchement.</div>`,
+
+<h3>Classification</h3>
+<p>Deux grands axes : la <strong>variable contrôlée</strong> (volume ou pression) et le <strong>déclencheur</strong> (ventilateur = contrôlé, patient = assisté/spontané). À cela s'ajoute la distinction <strong>invasif</strong> (sonde d'intubation) vs <strong>non invasif</strong> (masque).</p>
+
+<h3>VCV — Ventilation Contrôlée en Volume 🔴 INVASIF</h3>
+<table class="kv">
+  <tr><td>Variable contrôlée</td><td><strong>Volume courant (Vt)</strong></td></tr>
+  <tr><td>Variable résultante</td><td>Pression (varie selon C et R !)</td></tr>
+  <tr><td>Réglages opérateur</td><td>Vt, FR, PEEP, I:E, FiO₂</td></tr>
+  <tr><td>Profil débit</td><td>Carré (constant) ou décélérant</td></tr>
+  <tr><td>Avantage</td><td>Vt et VE garantis quelle que soit la mécanique</td></tr>
+  <tr><td>Surveillance</td><td>Pplat (&lt;30) et driving P (&lt;15) à chaque réglage</td></tr>
+  <tr><td>Indication</td><td>Intubation standard, SDRA, BPCO</td></tr>
+</table>
+
+<h3>VCP — Ventilation Contrôlée en Pression 🔴 INVASIF</h3>
+<table class="kv">
+  <tr><td>Variable contrôlée</td><td><strong>Pression inspiratoire (PIP)</strong></td></tr>
+  <tr><td>Variable résultante</td><td>Volume courant (varie selon C et R !)</td></tr>
+  <tr><td>Réglages opérateur</td><td>PIP, PEEP, FR, I:E, FiO₂</td></tr>
+  <tr><td>Profil débit</td><td>Décélérant (max en début d'insp.) → meilleure distribution</td></tr>
+  <tr><td>Avantage</td><td>Pression limitée, profil de débit plus physiologique</td></tr>
+  <tr><td>Danger</td><td>Vt non garanti — si compliance ↓ → Vt ↓ sans alarme !</td></tr>
+  <tr><td>Surveillance</td><td>Vt expiré mesuré en continu sur le ventilateur</td></tr>
+</table>
+
+<h3>VACI — Ventilation Assistée Contrôlée Intermittente 🔴 INVASIF</h3>
+<table class="kv">
+  <tr><td>Cycles contrôlés</td><td>FR réglée, Vt garanti (comme VCV)</td></tr>
+  <tr><td>Cycles spontanés</td><td>Déclenchés par le patient, amplifiés par PS réglable</td></tr>
+  <tr><td>Réglages opérateur</td><td>Vt, FR, PEEP, PS (pour les cycles spontanés), FiO₂</td></tr>
+  <tr><td>Intérêt</td><td>Maintien du drive, prévention atrophie diaphragmatique</td></tr>
+  <tr><td>Utilisation</td><td>Transition post-sédation profonde → sevrage progressif</td></tr>
+</table>
+
+<h3>VSAI / AI — Ventilation Spontanée avec Aide Inspiratoire 🔴 INVASIF</h3>
+<table class="kv">
+  <tr><td>Déclenchement</td><td>100% patient (effort inspiratoire)</td></tr>
+  <tr><td>Variable contrôlée</td><td><strong>Pression de support (PS)</strong></td></tr>
+  <tr><td>Réglages opérateur</td><td><strong>PEEP et PS uniquement</strong> · FiO₂</td></tr>
+  <tr><td>Pression plateau</td><td>PEEP + PS (constante pendant l'insufflation)</td></tr>
+  <tr><td>Profil débit</td><td>Décélérant — max en début, cyclage quand débit &lt; 25-30%</td></tr>
+  <tr><td>Vt</td><td>Non réglé — résultante de : effort patient + PS + C + R</td></tr>
+  <tr><td>Sevrage</td><td>PS 20→15→12→10→8→5 cmH₂O progressivement</td></tr>
+</table>
+<div class="ok-box">En VSAI on règle uniquement la <strong>PEEP</strong> et le niveau d'<strong>aide inspiratoire (PS)</strong>. Le Vt n'est pas un paramètre de réglage — c'est une valeur surveillée.</div>
+
+<h3>CPAP — Continuous Positive Airway Pressure 🟢 NON INVASIF (ou invasif)</h3>
+<table class="kv">
+  <tr><td>Principe</td><td>Pression positive continue. Aucune aide inspiratoire.</td></tr>
+  <tr><td>Réglages opérateur</td><td><strong>PEEP uniquement</strong> · FiO₂</td></tr>
+  <tr><td>Travail respiratoire</td><td>100% patient</td></tr>
+  <tr><td>Indications</td><td>TVS avant extubation · OAP cardiogénique (VNI) · SAOS</td></tr>
+  <tr><td>Contre-indication</td><td>Patient sans drive respiratoire · Apnée · Épuisement</td></tr>
+</table>
+
+<h3>BiPAP / VS-AI — Ventilation Non Invasive 🟢 NON INVASIF</h3>
+<table class="kv">
+  <tr><td>Principe</td><td>2 niveaux de pression : IPAP (inspiration) et EPAP (expiration)</td></tr>
+  <tr><td>Réglages opérateur</td><td><strong>IPAP et EPAP</strong> · FiO₂ · Interface masque</td></tr>
+  <tr><td>Aide inspiratoire</td><td>PS = IPAP − EPAP</td></tr>
+  <tr><td>IPAP habituelle</td><td>10-20 cmH₂O · EPAP 4-8 cmH₂O</td></tr>
+  <tr><td>Indications</td><td>BPCO décompensé (IRA hypercapnique) · OAP · post-extubation</td></tr>
+  <tr><td>Efficacité</td><td>Évite l'intubation dans 50-60% des IRA hypercapniques</td></tr>
+</table>
+<div class="warn-box"><div class="wb-title">⚠ ÉCHEC VNI → INTUBATION</div>
+Après 1-2h de VNI bien conduite : si pH &lt; 7.25, FR &gt; 35/min, SpO₂ &lt; 90%, trouble conscience → intubation sans délai.<br>
+Retarder l'intubation aggrave le pronostic.</div>
+
+<div class="memo"><div class="memo-title">📌 RÉSUMÉ — QUE RÈGLE-T-ON ?</div>
+VCV : <strong>Vt + FR + PEEP + I:E</strong><br>
+VCP : <strong>PIP + FR + PEEP + I:E</strong><br>
+VACI : <strong>Vt + FR + PEEP + PS (cycles spont.)</strong><br>
+VSAI : <strong>PEEP + PS</strong> seulement<br>
+CPAP : <strong>PEEP</strong> seulement<br>
+BiPAP/VNI : <strong>IPAP + EPAP</strong>
+</div>`,
 
 reglages:`<h2>03 — RÉGLAGES INITIAUX & ARDSNet</h2>
 <h3>Réglages de base</h3>
@@ -966,7 +1131,7 @@ function renderFiches(){
 function refresh(){
   const sc=SC[S.scen],m=MD[S.mode];
   document.getElementById("hdr-badges").innerHTML=
-    `<span class="badge ${sc.bcls}">${sc.label}</span><span class="badge b-cyan">${m.label}</span>`;
+    `<span class="badge ${sc.bcls}">${sc.label}</span><span class="badge b-cyan">${m.label}</span><span class="badge ${m.invasif?'b-red':'b-amber'}">${m.invasif?'INVASIF':'VNI'}</span>`;
   const showToolbar=!["fiches","isr","capno","pharmaco"].includes(S.tab);
   document.getElementById("toolbar-wrap").style.display=showToolbar?"block":"none";
   const el=document.getElementById("main-content");
