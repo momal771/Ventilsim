@@ -167,6 +167,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
           <button class="btn" data-mode="vsai">VSAI</button>
           <button class="btn" data-mode="cpap">CPAP</button>
           <button class="btn" data-mode="bipap">BiPAP</button>
+          <button class="btn" data-mode="vsai_vni">VSAI-VNI</button>
         </div>
       </div>
       <div class="toolgrp">
@@ -227,7 +228,13 @@ const MD={
     invasif:false, spontane:true,
     variables:["pip","peep","fio2"],
     desc:"Ventilation non invasive au masque. Deux niveaux de pression : IPAP (inspiration) et EPAP (expiration = PEEP). Aide inspiratoire = IPAP − EPAP.",
-    mooc:"VNI de premier choix en BPCO (IRA hypercapnique), OAP cardiogénique. Évite l'intubation dans 50-60% des cas si démarrage précoce."}
+    mooc:"VNI de premier choix en BPCO (IRA hypercapnique), OAP cardiogénique. Évite l'intubation dans 50-60% des cas si démarrage précoce."},
+  vsai_vni:{label:"VSAI-VNI",color:"#00e676",acls:"ag",
+    full:"VSAI Non Invasive — Aide Inspiratoire au Masque",
+    invasif:false, spontane:true,
+    variables:["peep","ps","fio2"],
+    desc:"Mode VSAI appliqué via masque facial ou nasobuccal. Chaque cycle déclenché par le patient. Pression = EPAP + PS. Tolérance aux fuites ++. Utilisé en sevrage de VNI ou d'emblée en BPCO modéré.",
+    mooc:"BPCO décompensé modéré : PS 10-15 cmH₂O + EPAP 4-6 cmH₂O. Différence avec BiPAP : le trigger et le cyclage sont identiques à la VSAI invasive — plus synchrone avec l'effort patient."}
 };
 
 // ISR — protocoles drogues
@@ -383,6 +390,27 @@ function genCurves(steps=280){
       else{q=Fp*(1-tr)*1.8;v=Vt*(1-Math.exp(-2.5*tr));p=ipap;}}
       else{const te=tc-Ti,tau=R*C/1000;v=Vt*Math.exp(-te/tau);q=-(Vt/tau)*Math.exp(-te/tau);p=epap+Math.max(0,ps_vni*Math.exp(-te*2));}
       if(SC[S.scen].triggers.freq<.15&&!asyncs.includes("non-trigger"))asyncs.push("non-trigger");
+    // ── VSAI-VNI ──
+    }else if(S.mode==="vsai_vni"){
+      // Identique VSAI mais avec fuites modélisées (légère irrégularité débit)
+      // et trigger légèrement moins sensible (interface masque)
+      const fuite=0.08;// 8% de fuite typique masque
+      if(insp){const tr=tc/Ti;
+        if(tr<.06){// trigger légèrement retardé (masque moins sensible)
+          p=S.peep-(SC[S.scen].triggers.effort==="intense"?3:1.5);q=.08;v=0;
+          if(SC[S.scen].triggers.effort==="intense"&&!asyncs.includes("double-trigger"))asyncs.push("double-trigger");
+        }else{
+          q=Fp*(1-tr)*1.9*(1-fuite);// débit légèrement réduit par fuites
+          v=Vt*(1-Math.exp(-2.8*tr));
+          p=S.peep+S.ps;
+        }
+        if(SC[S.scen].triggers.freq<.15&&!asyncs.includes("non-trigger"))asyncs.push("non-trigger");
+      }else{
+        const te=tc-Ti,tau=R*C/1000;
+        v=Vt*Math.exp(-te/tau);
+        q=-(Vt/tau)*Math.exp(-te/tau)*(1-fuite);
+        p=S.peep+Math.max(0,S.ps*Math.exp(-te*2.5));
+      }
     }
     P.push(Math.max(S.peep-6,p||S.peep));Q.push((q||0)*60);V.push(Math.max(0,(v||0)*1000));
   }
@@ -404,9 +432,10 @@ function getMetrics(){
     pmax=S.pip;
     drv=Math.round(S.pip-S.peep);
     ve=Math.round(vt_eff*(S.fr||14)/1000*10)/10;
-  }else if(S.mode==="vsai"){
-    // VSAI : Vt estimé par effort + mécanique
-    vt_eff=Math.round((S.ps*sc.C)*0.8);
+  }else if(S.mode==="vsai"||S.mode==="vsai_vni"){
+    // VSAI / VSAI-VNI : Vt estimé par effort + mécanique
+    const fuite_corr=S.mode==="vsai_vni"?0.92:1;
+    vt_eff=Math.round((S.ps*sc.C)*0.8*fuite_corr);
     pplat=Math.round(S.peep+S.ps);
     pmax=pplat;
     drv=S.ps;
@@ -621,6 +650,7 @@ function renderCourbes(){
       ${(S.mode==="vcpcp"||S.mode==="bipap")?`<div class="al a-w" style="margin-bottom:8px">Mode pression — <strong>Vt non garanti</strong> (${met.vt_eff} mL estimé). Surveiller le Vt expiré mesuré sur le ventilateur.</div>`:''}
       ${S.mode==="cpap"?`<div class="al a-i" style="margin-bottom:8px">CPAP — Patient ventile spontanément. Aucune aide inspiratoire. Utiliser pour TVS ou apnée du sommeil.</div>`:''}
       ${S.mode==="bipap"?`<div class="al a-p" style="margin-bottom:8px">VNI BiPAP — IPAP = ${S.pip} cmH₂O · EPAP = ${S.peep} cmH₂O · PS = ${S.pip-S.peep} cmH₂O · Interface masque facial ou nasobuccal.</div>`:''}
+      ${S.mode==="vsai_vni"?`<div class="al a-g" style="margin-bottom:8px">VSAI-VNI — EPAP = ${S.peep} cmH₂O · PS = ${S.ps} cmH₂O · Pression plateau = ${S.peep+S.ps} cmH₂O · Fuites masque compensées · Trigger adapté interface.</div>`:''}
       ${met.pplat>30?`<div class="al a-d">Pplat > 30 cmH₂O — ↓ Vt → 6 mL/kg PI (ARDSNet).</div>`:''}
       ${met.drv>15?`<div class="al a-w">Driving P > 15 cmH₂O — mortalité ↑ au SDRA (Amato 2015).</div>`:''}
       ${met.autoP?`<div class="al a-w">Auto-PEEP probable — τ=${Math.round(sc.R*sc.C)}ms. ↓ FR ou ↑ Te.</div>`:''}
@@ -1005,17 +1035,29 @@ modes:`<h2>02 — MODES VENTILATOIRES</h2>
   <tr><td>Indications</td><td>BPCO décompensé (IRA hypercapnique) · OAP · post-extubation</td></tr>
   <tr><td>Efficacité</td><td>Évite l'intubation dans 50-60% des IRA hypercapniques</td></tr>
 </table>
+<h3>VSAI-VNI — Aide Inspiratoire Non Invasive 🟢 NON INVASIF</h3>
+<table class="kv">
+  <tr><td>Principe</td><td>Mode VSAI appliqué via masque — trigger + cyclage identiques à la VSAI invasive</td></tr>
+  <tr><td>Réglages opérateur</td><td><strong>EPAP + PS</strong> · FiO₂</td></tr>
+  <tr><td>Différence vs BiPAP</td><td>Meilleure synchronisation patient (trigger flow) · Compensation fuites automatique</td></tr>
+  <tr><td>Indications</td><td>BPCO décompensé modéré · Sevrage progressif de VNI · Post-extubation</td></tr>
+  <tr><td>Réglages BPCO</td><td>PS 10-15 cmH₂O · EPAP 4-6 cmH₂O · FiO₂ titrée SpO₂ 88-92%</td></tr>
+  <tr><td>Particularité</td><td>Fuites masque tolérées et compensées par le ventilateur (algorithme dédié)</td></tr>
+</table>
+<div class="amber-box">La distinction BiPAP vs VSAI-VNI est surtout sémantique selon les constructeurs : sur Philips Respironics c'est "BiPAP S/T", sur ResMed "VSAI", sur Dräger "SPN-CPAP/PS". Le principe physiologique est identique.</div>
+
 <div class="warn-box"><div class="wb-title">⚠ ÉCHEC VNI → INTUBATION</div>
 Après 1-2h de VNI bien conduite : si pH &lt; 7.25, FR &gt; 35/min, SpO₂ &lt; 90%, trouble conscience → intubation sans délai.<br>
 Retarder l'intubation aggrave le pronostic.</div>
 
 <div class="memo"><div class="memo-title">📌 RÉSUMÉ — QUE RÈGLE-T-ON ?</div>
-VCV : <strong>Vt + FR + PEEP + I:E</strong><br>
-VCP : <strong>PIP + FR + PEEP + I:E</strong><br>
-VACI : <strong>Vt + FR + PEEP + PS (cycles spont.)</strong><br>
-VSAI : <strong>PEEP + PS</strong> seulement<br>
-CPAP : <strong>PEEP</strong> seulement<br>
-BiPAP/VNI : <strong>IPAP + EPAP</strong>
+VCV 🔴 : <strong>Vt + FR + PEEP + I:E</strong><br>
+VCP 🔴 : <strong>PIP + FR + PEEP + I:E</strong><br>
+VACI 🔴 : <strong>Vt + FR + PEEP + PS (cycles spont.)</strong><br>
+VSAI 🔴 : <strong>PEEP + PS</strong> seulement<br>
+CPAP 🟢/🔴 : <strong>PEEP</strong> seulement<br>
+BiPAP 🟢 : <strong>IPAP + EPAP</strong><br>
+VSAI-VNI 🟢 : <strong>EPAP + PS</strong> (identique VSAI, masque)
 </div>`,
 
 reglages:`<h2>03 — RÉGLAGES INITIAUX & ARDSNet</h2>
